@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pomo do it" • Pomodoro</title>
+  <title>Pomo do it! • Pomodoro</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app" id="appRoot">
-    <!-- TOP BAR -->
     <header class="topbar">
       <div class="brand">
         <div class="logo">🍅</div>
@@ -46,9 +45,8 @@
       </div>
     </header>
 
-    <!-- MAIN GRID -->
     <main class="grid">
-      <!-- TIMER CARD -->
+      <!-- 1) TIMER -->
       <section class="card timer">
         <div class="card-head">
           <div>
@@ -147,90 +145,44 @@
         </div>
       </section>
 
-      <!-- TASKS CARD -->
-      <section class="card tasks">
+      <!-- 2) HUB (abas dinâmicas) -->
+      <section class="card hub">
         <div class="card-head">
           <div>
-            <h2 id="tasksTitle">Tarefas</h2>
-            <p class="muted" id="tasksSubtitle">Cada tarefa pede um certo número de 🍅.</p>
-          </div>
-          <div class="pill" id="tasksCountPill">0</div>
-        </div>
-
-        <div class="task-add">
-          <input type="text" id="taskName" placeholder="Nova tarefa (ex: Matemática, capítulo 3)" maxlength="60" />
-          <input type="number" id="taskEst" min="1" max="24" value="3" title="Pomodoros estimados" />
-          <button class="btn primary" id="addTaskBtn">+ Adicionar</button>
-        </div>
-
-        <div class="list" id="taskList" aria-label="Lista de tarefas"></div>
-
-        <div class="tasks-foot">
-          <button class="btn" id="clearDoneBtn">🧹 Limpar concluídas</button>
-          <button class="btn" id="seedBtn" title="Exemplo rápido">✨ Exemplo</button>
-        </div>
-      </section>
-
-      <!-- INSIGHTS CARD -->
-      <section class="card insights">
-        <div class="card-head">
-          <div>
-            <h2 id="insightsTitle">Painel</h2>
-            <p class="muted" id="insightsSubtitle">Seu foco, virando dados e memória.</p>
+            <h2 id="hubTitle">Central</h2>
+            <p class="muted" id="hubSubtitle">Tudo organizado em abas pra caber bonito.</p>
           </div>
 
           <div class="tabs" role="tablist">
-            <button class="tab active" data-tab="stats" id="tabStats">Stats</button>
+            <button class="tab active" data-tab="tasks" id="tabTasks">Tarefas</button>
+            <button class="tab" data-tab="stats" id="tabStats">Metas</button>
             <button class="tab" data-tab="notes" id="tabNotes">Notas</button>
             <button class="tab" data-tab="history" id="tabHistory">Histórico</button>
           </div>
         </div>
 
-        <!-- AMBIENT / MUSIC PANEL -->
-        <div class="ambient">
-          <div class="ambient-head">
-            <div>
-              <div class="ambient-title" id="ambientTitle">Som e música</div>
-              <div class="muted" id="ambientHint">Escolha um ambiente, mixe camadas ou envie sua própria música.</div>
-            </div>
-            <button class="btn tiny" id="ambientToggle"><span id="ambientState">Play</span></button>
+        <!-- TASKS -->
+        <div class="tabpane active" id="pane-tasks" role="tabpanel">
+          <div class="pane-head">
+            <div class="pill" id="tasksCountPill">0</div>
           </div>
 
-          <div class="ambient-grid">
-            <div class="field">
-              <label id="ambientALabel">Camada A</label>
-              <select id="ambientASelect"></select>
-            </div>
-
-            <div class="field">
-              <label id="ambientBLabel">Camada B</label>
-              <select id="ambientBSelect"></select>
-            </div>
-
-            <div class="field">
-              <label id="ambientVolLabel">Volume</label>
-              <input type="range" id="ambientVolume" min="0" max="100" value="35" />
-            </div>
+          <div class="task-add">
+            <input type="text" id="taskName" placeholder="Nova tarefa (ex: Matemática, capítulo 3)" maxlength="60" />
+            <input type="number" id="taskEst" min="1" max="24" value="3" title="Pomodoros estimados" />
+            <button class="btn primary" id="addTaskBtn">+ Adicionar</button>
           </div>
 
-          <div class="ambient-upload">
-            <div class="field grow">
-              <label id="uploadLabel">Enviar sua música (MP3)</label>
-              <input type="file" id="userMusicFile" accept="audio/*" />
-            </div>
-            <button class="btn" id="clearUserMusicBtn" title="Remover música enviada">🧽 Limpar</button>
-          </div>
+          <div class="list" id="taskList" aria-label="Lista de tarefas"></div>
 
-          <div class="ambient-foot">
-            <div class="muted small" id="ambientNote">
-              Dica: “White Noise” funciona sem arquivo. Para os ambientes, coloque mp3 em /audio/.
-            </div>
-            <button class="btn" id="ambientStopBtn">⏹ Stop</button>
+          <div class="tasks-foot">
+            <button class="btn" id="clearDoneBtn">🧹 Limpar concluídas</button>
+            <button class="btn" id="seedBtn" title="Exemplo rápido">✨ Exemplo</button>
           </div>
         </div>
 
         <!-- STATS -->
-        <div class="tabpane active" id="pane-stats" role="tabpanel">
+        <div class="tabpane" id="pane-stats" role="tabpanel">
           <div class="stats-grid">
             <div class="stat">
               <div class="stat-k" id="stFocusTodayK">Foco hoje</div>
@@ -289,6 +241,70 @@
             <button class="btn" id="clearHistoryBtn">🧹 Limpar histórico</button>
           </div>
           <div class="list" id="historyList" aria-label="Histórico"></div>
+        </div>
+      </section>
+
+      <!-- 3) MUSIC ONLY -->
+      <section class="card music">
+        <div class="card-head">
+          <div>
+            <h2 id="musicTitle">Som e música</h2>
+            <p class="muted" id="musicSubtitle">Toca no foco, silencia na pausa. Com fade suave.</p>
+          </div>
+          <button class="btn tiny" id="ambientToggle">
+            <span id="ambientState">Play</span>
+          </button>
+        </div>
+
+        <div class="ambient-grid">
+          <div class="field">
+            <label id="ambientALabel">Camada A</label>
+            <select id="ambientASelect"></select>
+          </div>
+          <div class="field">
+            <label id="ambientBLabel">Camada B</label>
+            <select id="ambientBSelect"></select>
+          </div>
+          <div class="field">
+            <label id="ambientVolLabel">Volume</label>
+            <input type="range" id="ambientVolume" min="0" max="100" value="35" />
+          </div>
+        </div>
+
+        <div class="ambient-upload">
+          <div class="field grow">
+            <label id="uploadLabel">Enviar sua música (MP3)</label>
+            <input type="file" id="userMusicFile" accept="audio/*" />
+          </div>
+          <button class="btn" id="clearUserMusicBtn" title="Remover música enviada">🧽 Limpar</button>
+        </div>
+
+        <div class="music-options">
+          <div class="opt">
+            <input type="checkbox" id="focusOnlyToggle" checked />
+            <label for="focusOnlyToggle" id="focusOnlyLabel">Auto-play só no FOCO</label>
+          </div>
+          <div class="opt">
+            <input type="checkbox" id="fadeToggle" checked />
+            <label for="fadeToggle" id="fadeLabel">Fade in/out automático</label>
+          </div>
+          <div class="opt">
+            <input type="checkbox" id="dynamicPingToggle" checked />
+            <label for="dynamicPingToggle" id="dynamicPingLabel">Som dinâmico (a cada 8 min)</label>
+          </div>
+        </div>
+
+        <div class="ambient-foot">
+          <div class="muted small" id="ambientNote">
+            Dica: “White Noise” funciona sem arquivo. Ambientes usam /audio/*.mp3
+          </div>
+          <button class="btn" id="ambientStopBtn">⏹ Stop</button>
+        </div>
+
+        <div class="mini-help">
+          <div class="muted small">
+            Se o navegador bloquear áudio automático, clique em “Play” uma vez.
+          </div>
         </div>
       </section>
     </main>

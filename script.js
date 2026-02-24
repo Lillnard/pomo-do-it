@@ -1,5 +1,4 @@
 (() => {
-    // Helpers
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => Array.from(document.querySelectorAll(sel));
     const nowISO = () => new Date().toISOString();
@@ -9,13 +8,13 @@
     const fmtMMSS = (sec) => `${pad2(Math.floor(sec / 60))}:${pad2(sec % 60)}`;
     const safeParse = (json, fallback) => { try { return JSON.parse(json); } catch { return fallback; } };
   
-    // i18n (mantive mínimo para não ficar gigante)
     const I18N = {
       pt: {
         brandSub: "Pomodoro inteligente para estudos",
-        ambientTitle: "Som e música",
-        ambientHint: "Escolha um ambiente, mixe camadas ou envie sua própria música.",
-        uploadLabel: "Enviar sua música (MP3)",
+        hubTitle: "Central",
+        hubSubtitle: "Tudo organizado em abas pra caber bonito.",
+        musicTitle: "Som e música",
+        musicSubtitle: "Toca no foco, silencia na pausa. Com fade suave.",
         none: "(Nenhum)",
         user: "Minha música",
         white: "White noise",
@@ -48,12 +47,16 @@
         notifyOff: "Ativo",
         full: "Full",
         exitFull: "Exit",
+        phaseFocus: "FOCO",
+        phaseBreak: "PAUSA",
+        phaseLong: "PAUSA LONGA",
       },
       en: {
         brandSub: "Smart Pomodoro for studying",
-        ambientTitle: "Sound & music",
-        ambientHint: "Pick ambience, mix layers, or upload your own track.",
-        uploadLabel: "Upload your music (MP3)",
+        hubTitle: "Hub",
+        hubSubtitle: "Tabbed layout to keep everything neat.",
+        musicTitle: "Sound & music",
+        musicSubtitle: "Plays on focus, silent on breaks. Smooth fade.",
         none: "(None)",
         user: "My music",
         white: "White noise",
@@ -86,16 +89,19 @@
         notifyOff: "Enabled",
         full: "Full",
         exitFull: "Exit",
+        phaseFocus: "FOCUS",
+        phaseBreak: "BREAK",
+        phaseLong: "LONG BREAK",
       }
     };
   
-    // Storage
-    const LS_KEY = "focusflow_music_v1";
+    const LS_KEY = "focusflow_layout_audio_v1";
+  
     const defaultState = () => ({
       settings: {
         lang: (navigator.language || "pt").toLowerCase().startsWith("pt") ? "pt" : "en",
         theme: "dark",
-        sound: true,            // beeps do timer
+        sound: true,            // beep timer + ping dinâmico
         notifications: false,
         auto: true
       },
@@ -111,10 +117,13 @@
       },
       ambient: {
         playing: false,
-        a: "white",     // none | white | rain | ocean | forest | fire | cafe | stream | user
+        a: "white",
         b: "none",
         volume: 35,
-        userName: ""
+        userName: "",
+        focusOnly: true,
+        fade: true,
+        dynamicPing: true
       },
       timer: {
         phase: "focus",
@@ -124,7 +133,7 @@
         cycleIndex: 1,
         pomosCompletedToday: 0,
         distractionsToday: 0,
-        startedAtISO: null
+        nextPingAtSec: 8 * 60
       },
       tasks: [],
       notes: [],
@@ -154,9 +163,9 @@
     const saveState = () => localStorage.setItem(LS_KEY, JSON.stringify(state));
     const t9 = () => I18N[state.settings.lang] || I18N.pt;
   
-    // UI refs (só o essencial + painel)
     const el = {
       brandSub: $("#brandSub"),
+  
       langToggle: $("#langToggle"),
       langLabel: $("#langLabel"),
   
@@ -199,6 +208,19 @@
       sessionIntent: $("#sessionIntent"),
       saveSessionBtn: $("#saveSessionBtn"),
   
+      hubTitle: $("#hubTitle"),
+      hubSubtitle: $("#hubSubtitle"),
+      musicTitle: $("#musicTitle"),
+      musicSubtitle: $("#musicSubtitle"),
+  
+      tabs: $$(".tab"),
+      panes: {
+        tasks: $("#pane-tasks"),
+        stats: $("#pane-stats"),
+        notes: $("#pane-notes"),
+        history: $("#pane-history"),
+      },
+  
       taskName: $("#taskName"),
       taskEst: $("#taskEst"),
       addTaskBtn: $("#addTaskBtn"),
@@ -207,19 +229,11 @@
       clearDoneBtn: $("#clearDoneBtn"),
       seedBtn: $("#seedBtn"),
   
-      tabs: $$(".tab"),
-      panes: {
-        stats: $("#pane-stats"),
-        notes: $("#pane-notes"),
-        history: $("#pane-history"),
-      },
-  
       focusToday: $("#focusToday"),
       pomosToday: $("#pomosToday"),
       streak: $("#streak"),
       bestHour: $("#bestHour"),
       bars7: $("#bars7"),
-  
       exportCsvBtn: $("#exportCsvBtn"),
       printReportBtn: $("#printReportBtn"),
       resetAllBtn: $("#resetAllBtn"),
@@ -232,12 +246,6 @@
       historyList: $("#historyList"),
       clearHistoryBtn: $("#clearHistoryBtn"),
   
-      toast: $("#toast"),
-  
-      // Ambient
-      ambientTitle: $("#ambientTitle"),
-      ambientHint: $("#ambientHint"),
-      uploadLabel: $("#uploadLabel"),
       ambientToggle: $("#ambientToggle"),
       ambientState: $("#ambientState"),
       ambientASelect: $("#ambientASelect"),
@@ -246,9 +254,14 @@
       ambientStopBtn: $("#ambientStopBtn"),
       userMusicFile: $("#userMusicFile"),
       clearUserMusicBtn: $("#clearUserMusicBtn"),
+  
+      focusOnlyToggle: $("#focusOnlyToggle"),
+      fadeToggle: $("#fadeToggle"),
+      dynamicPingToggle: $("#dynamicPingToggle"),
+  
+      toast: $("#toast"),
     };
   
-    // Toast
     let toastTimer = null;
     function toast(msg) {
       el.toast.textContent = msg;
@@ -269,13 +282,14 @@
       const t = t9();
       el.langLabel.textContent = state.settings.lang.toUpperCase();
       el.brandSub.textContent = t.brandSub;
-  
-      el.ambientTitle.textContent = t.ambientTitle;
-      el.ambientHint.textContent = t.ambientHint;
-      el.uploadLabel.textContent = t.uploadLabel;
+      el.hubTitle.textContent = t.hubTitle;
+      el.hubSubtitle.textContent = t.hubSubtitle;
+      el.musicTitle.textContent = t.musicTitle;
+      el.musicSubtitle.textContent = t.musicSubtitle;
   
       renderAmbientOptions();
       renderAmbient();
+      renderTimer();
     }
   
     // Notifications
@@ -286,12 +300,13 @@
       try { new Notification(title, { body }); } catch {}
     }
   
-    // Timer beeps
+    // AudioContext for beeps and ping
     let audioCtx = null;
     function ensureAudioContext() {
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
       return audioCtx;
     }
+  
     function beep(kind = "soft") {
       if (!state.settings.sound) return;
       try {
@@ -325,201 +340,55 @@
       } catch {}
     }
   
-    // Ambient engine
-    const AMBIENT_FILES = {
-      rain:   "audio/rain.mp3",
-      ocean:  "audio/ocean.mp3",
-      forest: "audio/forest.mp3",
-      fire:   "audio/fireplace.mp3",
-      cafe:   "audio/cafe.mp3",
-      stream: "audio/stream.mp3"
-    };
+    // Ping suave a cada 8 min (FOCO)
+    function focusPing() {
+      if (!state.ambient.dynamicPing) return;
+      if (!state.settings.sound) return;
+      try {
+        const ctx = ensureAudioContext();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        const t0 = ctx.currentTime;
   
-    const aPlayer = new Audio();
-    const bPlayer = new Audio();
-    const userPlayer = new Audio();     // música do usuário
-    aPlayer.loop = true;
-    bPlayer.loop = true;
-    userPlayer.loop = true;
+        o.type = "sine";
+        o.frequency.setValueAtTime(880, t0);
+        o.frequency.exponentialRampToValueAtTime(330, t0 + 0.18);
   
-    // White noise (1 gerador para tudo, não duplica)
-    let noiseNode = null;
-    let noiseGain = null;
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(0.06, t0 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
   
-    function setAmbientVolume(vol01) {
-      const v = clamp(vol01, 0, 1);
-      aPlayer.volume = v;
-      bPlayer.volume = v;
-      userPlayer.volume = v;
-      if (noiseGain) noiseGain.gain.value = v * 0.65;
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.start(t0);
+        o.stop(t0 + 0.25);
+      } catch {}
     }
   
-    function stopWhiteNoise() {
-      if (noiseNode) {
-        try { noiseNode.stop(); } catch {}
-        noiseNode = null;
-      }
-      if (noiseGain) {
-        try { noiseGain.disconnect(); } catch {}
-        noiseGain = null;
-      }
-    }
-  
-    function startWhiteNoise(vol01) {
-      const ctx = ensureAudioContext();
-      const bufferSize = ctx.sampleRate * 2;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-  
-      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.9;
-  
-      const src = ctx.createBufferSource();
-      src.buffer = buffer;
-      src.loop = true;
-  
-      const g = ctx.createGain();
-      g.gain.value = clamp(vol01, 0, 1) * 0.65;
-  
-      src.connect(g);
-      g.connect(ctx.destination);
-  
-      src.start();
-      noiseNode = src;
-      noiseGain = g;
-    }
-  
-    function stopAllAmbientSources() {
-      aPlayer.pause(); bPlayer.pause(); userPlayer.pause();
-      aPlayer.currentTime = 0; bPlayer.currentTime = 0; userPlayer.currentTime = 0;
-      stopWhiteNoise();
-    }
-  
-    function setPlayerSourceByKey(player, key) {
-      if (key === "none" || key === "white" || key === "user") {
-        player.pause();
-        player.src = "";
-        return;
-      }
-      player.src = AMBIENT_FILES[key] || "";
-    }
-  
-    async function playKey(key, which) {
-      const vol01 = clamp((state.ambient.volume || 35) / 100, 0, 1);
-      setAmbientVolume(vol01);
-  
-      if (key === "none") return;
-  
-      if (key === "white") {
-        if (!noiseNode) startWhiteNoise(vol01);
-        return;
-      }
-  
-      if (key === "user") {
-        if (!userPlayer.src) return; // sem arquivo enviado
-        try { await userPlayer.play(); } catch {}
-        return;
-      }
-  
-      const player = which === "A" ? aPlayer : bPlayer;
-      setPlayerSourceByKey(player, key);
-      if (player.src) {
-        try { await player.play(); } catch {}
-      }
-    }
-  
-    async function startAmbient() {
-      stopAllAmbientSources();
-  
-      const vol01 = clamp((state.ambient.volume || 35) / 100, 0, 1);
-      setAmbientVolume(vol01);
-  
-      // Se A ou B for "user", toca o userPlayer (um só)
-      // A e B podem ser arquivos ou white noise; user é exclusivo do userPlayer.
-      await playKey(state.ambient.a, "A");
-      await playKey(state.ambient.b, "B");
-  
-      state.ambient.playing = true;
-      saveState();
-      renderAmbient();
-    }
-  
-    function stopAmbient() {
-      stopAllAmbientSources();
-      state.ambient.playing = false;
-      saveState();
-      renderAmbient();
-    }
-  
-    async function toggleAmbient() {
-      if (state.ambient.playing) stopAmbient();
-      else await startAmbient();
-    }
-  
-    // Ambient options UI
-    function renderAmbientOptions() {
-      const t = t9();
-  
-      const options = [
-        { v: "none",  label: t.none },
-        { v: "white", label: t.white },
-        { v: "rain",  label: t.rain },
-        { v: "ocean", label: t.ocean },
-        { v: "stream",label: t.stream },
-        { v: "forest",label: t.forest },
-        { v: "fire",  label: t.fire },
-        { v: "cafe",  label: t.cafe },
-        { v: "user",  label: t.user + (state.ambient.userName ? ` (${state.ambient.userName})` : "") },
-      ];
-  
-      const build = (sel, current) => {
-        sel.innerHTML = "";
-        for (const o of options) {
-          const opt = document.createElement("option");
-          opt.value = o.v;
-          opt.textContent = o.label;
-          sel.appendChild(opt);
-        }
-        sel.value = current || "none";
-      };
-  
-      build(el.ambientASelect, state.ambient.a);
-      build(el.ambientBSelect, state.ambient.b);
-  
-      el.ambientVolume.value = String(state.ambient.volume ?? 35);
-    }
-  
-    function renderAmbient() {
-      const t = t9();
-      el.ambientState.textContent = state.ambient.playing ? t.pauseAmbient : t.play;
-    }
-  
-    // Tabs
+    // Tabs hub
     el.tabs.forEach(btn => {
       btn.addEventListener("click", () => {
         el.tabs.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         const key = btn.dataset.tab;
-        Object.entries(el.panes).forEach(([k, pane]) => {
-          pane.classList.toggle("active", k === key);
-        });
+        Object.entries(el.panes).forEach(([k, pane]) => pane.classList.toggle("active", k === key));
       });
     });
   
-    // Language toggle
+    // Toggles top
     el.langToggle.addEventListener("click", () => {
       state.settings.lang = state.settings.lang === "pt" ? "en" : "pt";
       saveState();
       applyLang();
+      renderAll();
     });
   
-    // Theme toggle
     el.themeToggle.addEventListener("click", () => {
       state.settings.theme = state.settings.theme === "light" ? "dark" : "light";
       saveState();
       applyTheme();
     });
   
-    // Timer sound toggle
     el.soundToggle.addEventListener("click", () => {
       const t = t9();
       state.settings.sound = !state.settings.sound;
@@ -528,7 +397,6 @@
       el.soundLabel.textContent = state.settings.sound ? t.soundOn : t.soundOff;
     });
   
-    // Notifications toggle
     el.notifyBtn.addEventListener("click", async () => {
       const t = t9();
       if (!("Notification" in window)) { toast(t.toastNotifDenied); return; }
@@ -547,12 +415,9 @@
         saveState();
         el.notifyLabel.textContent = t.notifyOff;
         toast(t.toastNotifOn);
-      } else {
-        toast(t.toastNotifDenied);
-      }
+      } else toast(t.toastNotifDenied);
     });
   
-    // Fullscreen
     el.fullscreenBtn.addEventListener("click", async () => {
       const t = t9();
       try {
@@ -566,12 +431,19 @@
       el.fsLabel.textContent = document.fullscreenElement ? t.exitFull : t.full;
     });
   
-    // ---------- Timer + tasks + notes + history (mantive o “core” funcional, igual ao seu)
+    // -------- TIMER ----------
     const presets = {
       classic: { focus: 25, brk: 5, lng: 15, cycles: 4, goal: 4 },
       deep:    { focus: 50, brk: 10, lng: 20, cycles: 4, goal: 4 },
       sprint:  { focus: 15, brk: 3, lng: 10, cycles: 6, goal: 6 },
     };
+  
+    function phaseLabel(phase) {
+      const t = t9();
+      if (phase === "focus") return t.phaseFocus;
+      if (phase === "break") return t.phaseBreak;
+      return t.phaseLong;
+    }
   
     function phaseSeconds(phase) {
       if (phase === "focus") return state.planner.focusMin * 60;
@@ -587,35 +459,49 @@
       state.timer.remainingSec = phaseSeconds(phase);
       state.timer.totalSec = phaseSeconds(phase);
       state.timer.running = false;
-      state.timer.startedAtISO = null;
+      state.timer.nextPingAtSec = 8 * 60;
       lastTick = null;
       if (tickHandle) { clearInterval(tickHandle); tickHandle = null; }
       saveState();
-      renderTimer();
+      renderAll();
+      syncAmbientWithFocusState(); // garante silêncio/padrão
     }
   
     function startTick() {
       if (tickHandle) return;
       lastTick = Date.now();
-      tickHandle = setInterval(() => {
+      tickHandle = setInterval(async () => {
         if (!state.timer.running) return;
+  
         const now = Date.now();
         const dt = Math.floor((now - lastTick) / 1000);
         if (dt <= 0) return;
         lastTick = now;
   
         state.timer.remainingSec = Math.max(0, state.timer.remainingSec - dt);
-        if (state.timer.remainingSec <= 0) onPhaseEnd();
+  
+        // ping dinâmico no foco
+        if (state.timer.phase === "focus" && state.timer.running && state.ambient.dynamicPing) {
+          const elapsed = state.timer.totalSec - state.timer.remainingSec;
+          if (elapsed >= state.timer.nextPingAtSec) {
+            focusPing();
+            state.timer.nextPingAtSec += 8 * 60;
+          }
+        }
+  
+        if (state.timer.remainingSec <= 0) await onPhaseEnd();
+  
         saveState();
         renderTimer();
       }, 250);
     }
   
-    function toggleRun(run) {
+    async function toggleRun(run) {
       state.timer.running = run;
       if (run) startTick();
       saveState();
       renderTimer();
+      await syncAmbientWithFocusState();
     }
   
     function getActiveTask() {
@@ -624,7 +510,7 @@
       return state.tasks.find(t => t.id === id) || null;
     }
   
-    function onPhaseEnd() {
+    async function onPhaseEnd() {
       const t = t9();
       const endedPhase = state.timer.phase;
   
@@ -666,7 +552,6 @@
         }
       }
   
-      // avanço de fase
       if (endedPhase === "focus") {
         const isEndOfCycle = state.timer.cycleIndex >= state.planner.cycles;
         state.timer.phase = isEndOfCycle ? "long" : "break";
@@ -674,6 +559,7 @@
         if (endedPhase === "long") state.timer.cycleIndex = 1;
         else state.timer.cycleIndex = clamp(state.timer.cycleIndex + 1, 1, 99);
         state.timer.phase = "focus";
+        state.timer.nextPingAtSec = 8 * 60;
       }
   
       state.timer.totalSec = phaseSeconds(state.timer.phase);
@@ -683,6 +569,7 @@
   
       saveState();
       renderAll();
+      await syncAmbientWithFocusState();
     }
   
     document.addEventListener("visibilitychange", () => {
@@ -694,12 +581,12 @@
       }
     });
   
-    // Render timer
     function renderTimer() {
       el.timeText.textContent = fmtMMSS(state.timer.remainingSec);
       const pct = state.timer.totalSec > 0 ? (1 - (state.timer.remainingSec / state.timer.totalSec)) * 100 : 0;
       el.progressBar.style.width = `${clamp(pct, 0, 100)}%`;
   
+      el.phaseBadge.textContent = phaseLabel(state.timer.phase);
       el.cycleNow.textContent = state.timer.cycleIndex;
       el.cycleTotal.textContent = state.planner.cycles;
       el.goalPomos.textContent = state.planner.goal;
@@ -709,7 +596,81 @@
       el.pauseBtn.disabled = !state.timer.running;
     }
   
-    // Tasks
+    function syncPlannerInputs() {
+      el.presetSelect.value = state.planner.preset;
+      el.focusMin.value = state.planner.focusMin;
+      el.breakMin.value = state.planner.breakMin;
+      el.longMin.value = state.planner.longMin;
+      el.cyclesCount.value = state.planner.cycles;
+      el.goalCount.value = state.planner.goal;
+      el.sessionIntent.value = state.planner.sessionIntent || "";
+      el.autoState.textContent = state.settings.auto ? "On" : "Off";
+    }
+  
+    // Planner events
+    el.presetSelect.addEventListener("change", () => {
+      const v = el.presetSelect.value;
+      state.planner.preset = v;
+  
+      if (presets[v]) {
+        state.planner.focusMin = presets[v].focus;
+        state.planner.breakMin = presets[v].brk;
+        state.planner.longMin = presets[v].lng;
+        state.planner.cycles = presets[v].cycles;
+        state.planner.goal = presets[v].goal;
+        resetTimerTo("focus");
+      }
+      saveState();
+      renderAll();
+    });
+  
+    function onPlannerChange() {
+      state.planner.focusMin = clamp(parseInt(el.focusMin.value || 25, 10), 5, 120);
+      state.planner.breakMin = clamp(parseInt(el.breakMin.value || 5, 10), 1, 60);
+      state.planner.longMin = clamp(parseInt(el.longMin.value || 15, 10), 5, 60);
+      state.planner.cycles = clamp(parseInt(el.cyclesCount.value || 4, 10), 1, 12);
+      state.planner.goal = clamp(parseInt(el.goalCount.value || 4, 10), 1, 24);
+      state.planner.preset = "custom";
+      el.presetSelect.value = "custom";
+      if (!state.timer.running) resetTimerTo(state.timer.phase);
+      saveState();
+      renderAll();
+    }
+    [el.focusMin, el.breakMin, el.longMin, el.cyclesCount, el.goalCount].forEach(inp => inp.addEventListener("change", onPlannerChange));
+  
+    el.autoToggle.addEventListener("click", () => {
+      state.settings.auto = !state.settings.auto;
+      saveState();
+      renderAll();
+    });
+  
+    el.saveSessionBtn.addEventListener("click", () => {
+      state.planner.sessionIntent = (el.sessionIntent.value || "").trim();
+      saveState();
+      toast(t9().toastSaved);
+    });
+  
+    el.activeTaskSelect.addEventListener("change", () => {
+      state.planner.activeTaskId = el.activeTaskSelect.value || "";
+      saveState();
+      renderAll();
+    });
+  
+    el.startBtn.addEventListener("click", () => toggleRun(true));
+    el.pauseBtn.addEventListener("click", () => toggleRun(false));
+    el.skipBtn.addEventListener("click", async () => { state.timer.remainingSec = 0; await onPhaseEnd(); });
+    el.resetBtn.addEventListener("click", () => resetTimerTo(state.timer.phase));
+  
+    // -------- TASKS / NOTES / HISTORY ----------
+    function escapeHTML(s) {
+      return String(s ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  
     function addTask(name, est) {
       const t = t9();
       const clean = (name || "").trim();
@@ -745,15 +706,6 @@
         ? [["Matemática: funções", 4], ["Português: interpretação", 3], ["Programação: JS DOM", 5]]
         : [["Math: functions", 4], ["Reading: comprehension", 3], ["Programming: JS DOM", 5]];
       for (const [n, e] of sample) addTask(n, e);
-    }
-  
-    function escapeHTML(s) {
-      return String(s ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
     }
   
     function renderTasks() {
@@ -826,7 +778,70 @@
       el.activeTaskSelect.value = state.planner.activeTaskId || "";
     }
   
-    // Stats simples (mesmo padrão)
+    function saveNote(text) {
+      const clean = (text || "").trim();
+      if (!clean) return;
+      const task = getActiveTask();
+      state.notes.unshift({
+        id: crypto.randomUUID(),
+        tsISO: nowISO(),
+        text: clean,
+        taskId: task?.id || "",
+        taskName: task?.name || "",
+        intent: state.planner.sessionIntent || ""
+      });
+      saveState();
+      toast(t9().toastSaved);
+      renderNotes();
+    }
+  
+    function renderNotes() {
+      el.notesList.innerHTML = "";
+      const show = state.notes.slice(0, 30);
+      for (const n of show) {
+        const div = document.createElement("div");
+        div.className = "item";
+        const when = new Date(n.tsISO).toLocaleString();
+        div.innerHTML = `
+          <div class="item-top">
+            <div class="item-title">${escapeHTML(n.taskName || "Note")}</div>
+            <div><span class="tag good">${escapeHTML(when)}</span></div>
+          </div>
+          <div class="item-meta"><span>${escapeHTML(n.intent || "")}</span></div>
+          <div style="margin-top:8px; font-weight:800; font-size:12px; line-height:1.35;">
+            ${escapeHTML(n.text)}
+          </div>
+        `;
+        el.notesList.appendChild(div);
+      }
+    }
+  
+    function renderHistory() {
+      el.historyList.innerHTML = "";
+      const show = state.history.slice(0, 40);
+      for (const h of show) {
+        const div = document.createElement("div");
+        div.className = "item";
+        const when = new Date(h.tsISO).toLocaleString();
+        div.innerHTML = `
+          <div class="item-top">
+            <div class="item-title">${escapeHTML(h.taskName || "")}</div>
+            <div><span class="tag warn">${escapeHTML(h.phase)} • ${h.minutes}m</span></div>
+          </div>
+          <div class="item-meta">
+            <span>${escapeHTML(when)}</span>
+            <span>🔁 ${h.cycleIndex}</span>
+            <span>🎛 ${escapeHTML(h.preset)}</span>
+          </div>
+          <div style="margin-top:8px; font-size:12px; color: var(--muted); font-weight:800;">
+            ${escapeHTML(h.intent || "")}
+          </div>
+        `;
+        el.historyList.appendChild(div);
+      }
+    }
+  
+    // Stats
     const dayOf = (iso) => iso.slice(0, 10);
     const hourOf = (iso) => new Date(iso).getHours();
   
@@ -896,7 +911,6 @@
       }).join("");
     }
   
-    // CSV export
     function exportCSV() {
       const headers = ["timestamp","phase","minutes","task","intent","cycleIndex","preset"];
       const rows = state.history.map(h => ([
@@ -916,7 +930,6 @@
       toast(t9().toastCsv);
     }
   
-    // Print report (simples)
     function printReport() {
       const today = computeToday();
       const streak = computeStreak();
@@ -950,156 +963,9 @@
       w.print();
     }
   
-    // Notes and history render (compactos)
-    function renderNotes() {
-      el.notesList.innerHTML = "";
-      const show = state.notes.slice(0, 30);
-      for (const n of show) {
-        const div = document.createElement("div");
-        div.className = "item";
-        const when = new Date(n.tsISO).toLocaleString();
-        div.innerHTML = `
-          <div class="item-top">
-            <div class="item-title">${escapeHTML(n.taskName || "Note")}</div>
-            <div><span class="tag good">${escapeHTML(when)}</span></div>
-          </div>
-          <div class="item-meta"><span>${escapeHTML(n.intent || "")}</span></div>
-          <div style="margin-top:8px; font-weight:800; font-size:12px; line-height:1.35;">
-            ${escapeHTML(n.text)}
-          </div>
-        `;
-        el.notesList.appendChild(div);
-      }
-    }
-  
-    function renderHistory() {
-      el.historyList.innerHTML = "";
-      const show = state.history.slice(0, 40);
-      for (const h of show) {
-        const div = document.createElement("div");
-        div.className = "item";
-        const when = new Date(h.tsISO).toLocaleString();
-        div.innerHTML = `
-          <div class="item-top">
-            <div class="item-title">${escapeHTML(h.taskName || "")}</div>
-            <div><span class="tag warn">${escapeHTML(h.phase)} • ${h.minutes}m</span></div>
-          </div>
-          <div class="item-meta">
-            <span>${escapeHTML(when)}</span>
-            <span>🔁 ${h.cycleIndex}</span>
-            <span>🎛 ${escapeHTML(h.preset)}</span>
-          </div>
-          <div style="margin-top:8px; font-size:12px; color: var(--muted); font-weight:800;">
-            ${escapeHTML(h.intent || "")}
-          </div>
-        `;
-        el.historyList.appendChild(div);
-      }
-    }
-  
-    // Save note
-    function saveNote(text) {
-      const clean = (text || "").trim();
-      if (!clean) return;
-      const task = getActiveTask();
-      state.notes.unshift({
-        id: crypto.randomUUID(),
-        tsISO: nowISO(),
-        text: clean,
-        taskId: task?.id || "",
-        taskName: task?.name || "",
-        intent: state.planner.sessionIntent || ""
-      });
-      saveState();
-      toast(t9().toastSaved);
-      renderNotes();
-    }
-  
-    // Planner render
-    function syncPlannerInputs() {
-      el.presetSelect.value = state.planner.preset;
-      el.focusMin.value = state.planner.focusMin;
-      el.breakMin.value = state.planner.breakMin;
-      el.longMin.value = state.planner.longMin;
-      el.cyclesCount.value = state.planner.cycles;
-      el.goalCount.value = state.planner.goal;
-      el.sessionIntent.value = state.planner.sessionIntent || "";
-      el.autoState.textContent = state.settings.auto ? "On" : "Off";
-    }
-  
-    function renderAll() {
-      syncPlannerInputs();
-      renderActiveTaskSelect();
-      renderTimer();
-      renderTasks();
-      renderStats();
-      renderNotes();
-      renderHistory();
-      renderAmbientOptions();
-      renderAmbient();
-    }
-  
-    // ---------- Events core ----------
-    el.presetSelect.addEventListener("change", () => {
-      const v = el.presetSelect.value;
-      state.planner.preset = v;
-  
-      if (presets[v]) {
-        state.planner.focusMin = presets[v].focus;
-        state.planner.breakMin = presets[v].brk;
-        state.planner.longMin = presets[v].lng;
-        state.planner.cycles = presets[v].cycles;
-        state.planner.goal = presets[v].goal;
-        resetTimerTo("focus");
-      }
-      saveState();
-      renderAll();
-    });
-  
-    function onPlannerChange() {
-      state.planner.focusMin = clamp(parseInt(el.focusMin.value || 25, 10), 5, 120);
-      state.planner.breakMin = clamp(parseInt(el.breakMin.value || 5, 10), 1, 60);
-      state.planner.longMin = clamp(parseInt(el.longMin.value || 15, 10), 5, 60);
-      state.planner.cycles = clamp(parseInt(el.cyclesCount.value || 4, 10), 1, 12);
-      state.planner.goal = clamp(parseInt(el.goalCount.value || 4, 10), 1, 24);
-      state.planner.preset = "custom";
-      el.presetSelect.value = "custom";
-      if (!state.timer.running) resetTimerTo(state.timer.phase);
-      saveState();
-      renderAll();
-    }
-    [el.focusMin, el.breakMin, el.longMin, el.cyclesCount, el.goalCount].forEach(inp => inp.addEventListener("change", onPlannerChange));
-  
-    el.autoToggle.addEventListener("click", () => {
-      state.settings.auto = !state.settings.auto;
-      saveState();
-      renderAll();
-    });
-  
-    el.saveSessionBtn.addEventListener("click", () => {
-      state.planner.sessionIntent = (el.sessionIntent.value || "").trim();
-      saveState();
-      toast(t9().toastSaved);
-    });
-  
-    el.activeTaskSelect.addEventListener("change", () => {
-      state.planner.activeTaskId = el.activeTaskSelect.value || "";
-      saveState();
-      renderAll();
-    });
-  
-    el.startBtn.addEventListener("click", () => toggleRun(true));
-    el.pauseBtn.addEventListener("click", () => toggleRun(false));
-    el.skipBtn.addEventListener("click", () => { state.timer.remainingSec = 0; onPhaseEnd(); });
-    el.resetBtn.addEventListener("click", () => resetTimerTo(state.timer.phase));
-  
-    el.addTaskBtn.addEventListener("click", () => {
-      addTask(el.taskName.value, el.taskEst.value);
-      el.taskName.value = "";
-    });
-    el.taskName.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") { addTask(el.taskName.value, el.taskEst.value); el.taskName.value = ""; }
-    });
+    // Buttons hub
+    el.addTaskBtn.addEventListener("click", () => { addTask(el.taskName.value, el.taskEst.value); el.taskName.value = ""; });
+    el.taskName.addEventListener("keydown", (e) => { if (e.key === "Enter") { addTask(el.taskName.value, el.taskEst.value); el.taskName.value = ""; } });
     el.clearDoneBtn.addEventListener("click", clearDoneTasks);
     el.seedBtn.addEventListener("click", seedTasks);
   
@@ -1124,39 +990,269 @@
       applyLang();
       toast(t9().toastResetAll);
       renderAll();
+      // por padrão, não tenta autoplay
+      state.ambient.playing = false;
+      saveState();
+      renderAmbient();
     });
   
-    // ---------- Ambient events ----------
+    // -------- AUDIO AMBIENT (fade + focusOnly + mix) ----------
+    const AMBIENT_FILES = {
+      rain:   "audio/rain.mp3",
+      ocean:  "audio/ocean.mp3",
+      forest: "audio/forest.mp3",
+      fire:   "audio/fireplace.mp3",
+      cafe:   "audio/cafe.mp3",
+      stream: "audio/stream.mp3"
+    };
+  
+    const aPlayer = new Audio();
+    const bPlayer = new Audio();
+    const userPlayer = new Audio();
+    aPlayer.loop = true;
+    bPlayer.loop = true;
+    userPlayer.loop = true;
+  
+    let noiseNode = null;
+    let noiseGain = null;
+  
+    let fadeMul = 0;
+    let fadeRAF = null;
+  
+    const baseVol01 = () => clamp((state.ambient.volume || 35) / 100, 0, 1);
+  
+    function setEffectiveVolume(mult) {
+      fadeMul = clamp(mult, 0, 1);
+      const v = baseVol01() * fadeMul;
+      aPlayer.volume = v;
+      bPlayer.volume = v;
+      userPlayer.volume = v;
+      if (noiseGain) noiseGain.gain.value = v * 0.65;
+    }
+  
+    function stopWhiteNoise() {
+      if (noiseNode) {
+        try { noiseNode.stop(); } catch {}
+        noiseNode = null;
+      }
+      if (noiseGain) {
+        try { noiseGain.disconnect(); } catch {}
+        noiseGain = null;
+      }
+    }
+  
+    function startWhiteNoise() {
+      const ctx = ensureAudioContext();
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.9;
+  
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      src.loop = true;
+  
+      const g = ctx.createGain();
+      g.gain.value = (baseVol01() * fadeMul) * 0.65;
+  
+      src.connect(g);
+      g.connect(ctx.destination);
+  
+      src.start();
+      noiseNode = src;
+      noiseGain = g;
+    }
+  
+    function stopAllAmbientSources() {
+      aPlayer.pause(); bPlayer.pause(); userPlayer.pause();
+      aPlayer.currentTime = 0; bPlayer.currentTime = 0; userPlayer.currentTime = 0;
+      stopWhiteNoise();
+    }
+  
+    function setPlayerSourceByKey(player, key) {
+      if (key === "none" || key === "white" || key === "user") {
+        player.pause();
+        player.src = "";
+        return;
+      }
+      player.src = AMBIENT_FILES[key] || "";
+    }
+  
+    async function playKey(key, which) {
+      if (key === "none") return;
+  
+      if (key === "white") {
+        if (!noiseNode) startWhiteNoise();
+        return;
+      }
+  
+      if (key === "user") {
+        if (!userPlayer.src) return;
+        try { await userPlayer.play(); } catch {}
+        return;
+      }
+  
+      const player = which === "A" ? aPlayer : bPlayer;
+      setPlayerSourceByKey(player, key);
+      if (player.src) {
+        try { await player.play(); } catch {}
+      }
+    }
+  
+    function fadeTo(target, ms = 480) {
+      if (!state.ambient.fade) {
+        setEffectiveVolume(target);
+        return Promise.resolve();
+      }
+      if (fadeRAF) cancelAnimationFrame(fadeRAF);
+  
+      return new Promise((resolve) => {
+        const start = performance.now();
+        const from = fadeMul;
+        const to = clamp(target, 0, 1);
+  
+        const step = (t) => {
+          const k = clamp((t - start) / ms, 0, 1);
+          const eased = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+          setEffectiveVolume(from + (to - from) * eased);
+          if (k < 1) fadeRAF = requestAnimationFrame(step);
+          else resolve();
+        };
+        fadeRAF = requestAnimationFrame(step);
+      });
+    }
+  
+    async function startAmbientInternal() {
+      stopAllAmbientSources();
+      setEffectiveVolume(0);
+  
+      await playKey(state.ambient.a, "A");
+      await playKey(state.ambient.b, "B");
+  
+      state.ambient.playing = true;
+      saveState();
+      renderAmbient();
+  
+      await fadeTo(1, 520);
+    }
+  
+    async function stopAmbientInternal() {
+      await fadeTo(0, 420);
+      stopAllAmbientSources();
+      state.ambient.playing = false;
+      saveState();
+      renderAmbient();
+    }
+  
+    async function toggleAmbientManual() {
+      // garante desbloqueio de áudio pelo gesto
+      try { ensureAudioContext(); } catch {}
+      if (state.ambient.playing) await stopAmbientInternal();
+      else await startAmbientInternal();
+    }
+  
+    async function syncAmbientWithFocusState() {
+      if (!state.ambient.focusOnly) return;
+  
+      const shouldPlay = (state.timer.phase === "focus") && state.timer.running;
+      if (shouldPlay && !state.ambient.playing) {
+        await startAmbientInternal();
+        return;
+      }
+      if (!shouldPlay && state.ambient.playing) {
+        await stopAmbientInternal();
+        return;
+      }
+    }
+  
+    function renderAmbientOptions() {
+      const t = t9();
+      const options = [
+        { v: "none",  label: t.none },
+        { v: "white", label: t.white },
+        { v: "rain",  label: t.rain },
+        { v: "ocean", label: t.ocean },
+        { v: "stream",label: t.stream },
+        { v: "forest",label: t.forest },
+        { v: "fire",  label: t.fire },
+        { v: "cafe",  label: t.cafe },
+        { v: "user",  label: t.user + (state.ambient.userName ? ` (${state.ambient.userName})` : "") },
+      ];
+  
+      const build = (sel, current) => {
+        sel.innerHTML = "";
+        for (const o of options) {
+          const opt = document.createElement("option");
+          opt.value = o.v;
+          opt.textContent = o.label;
+          sel.appendChild(opt);
+        }
+        sel.value = current || "none";
+      };
+  
+      build(el.ambientASelect, state.ambient.a);
+      build(el.ambientBSelect, state.ambient.b);
+      el.ambientVolume.value = String(state.ambient.volume ?? 35);
+  
+      el.focusOnlyToggle.checked = !!state.ambient.focusOnly;
+      el.fadeToggle.checked = !!state.ambient.fade;
+      el.dynamicPingToggle.checked = !!state.ambient.dynamicPing;
+    }
+  
+    function renderAmbient() {
+      const t = t9();
+      el.ambientState.textContent = state.ambient.playing ? t.pauseAmbient : t.play;
+    }
+  
+    // Ambient events
     el.ambientToggle.addEventListener("click", async () => {
-      // browsers exigem interação do usuário para tocar audio
-      await toggleAmbient();
+      await toggleAmbientManual();
     });
   
-    el.ambientStopBtn.addEventListener("click", () => stopAmbient());
+    el.ambientStopBtn.addEventListener("click", async () => {
+      await stopAmbientInternal();
+    });
   
     el.ambientASelect.addEventListener("change", async () => {
       state.ambient.a = el.ambientASelect.value;
       saveState();
-      if (state.ambient.playing) await startAmbient();
       renderAmbientOptions();
+      if (state.ambient.playing) await startAmbientInternal();
+      await syncAmbientWithFocusState();
     });
   
     el.ambientBSelect.addEventListener("change", async () => {
       state.ambient.b = el.ambientBSelect.value;
       saveState();
-      if (state.ambient.playing) await startAmbient();
       renderAmbientOptions();
+      if (state.ambient.playing) await startAmbientInternal();
+      await syncAmbientWithFocusState();
     });
   
     el.ambientVolume.addEventListener("input", () => {
       state.ambient.volume = parseInt(el.ambientVolume.value || "35", 10);
       saveState();
-      setAmbientVolume((state.ambient.volume || 35) / 100);
+      setEffectiveVolume(fadeMul);
     });
   
-    // Upload do usuário (não salva o arquivo no LocalStorage, só o nome)
-    let userMusicObjectURL = null;
+    el.focusOnlyToggle.addEventListener("change", async () => {
+      state.ambient.focusOnly = !!el.focusOnlyToggle.checked;
+      saveState();
+      await syncAmbientWithFocusState();
+    });
   
+    el.fadeToggle.addEventListener("change", () => {
+      state.ambient.fade = !!el.fadeToggle.checked;
+      saveState();
+    });
+  
+    el.dynamicPingToggle.addEventListener("change", () => {
+      state.ambient.dynamicPing = !!el.dynamicPingToggle.checked;
+      saveState();
+    });
+  
+    // Upload do usuário
+    let userMusicObjectURL = null;
     el.userMusicFile.addEventListener("change", async () => {
       const file = el.userMusicFile.files?.[0];
       if (!file) return;
@@ -1167,13 +1263,12 @@
   
       state.ambient.userName = file.name;
       saveState();
-  
-      // se o usuário escolher "Minha música", já toca
       renderAmbientOptions();
       toast(t9().toastSaved);
   
-      if ((state.ambient.a === "user" || state.ambient.b === "user") && state.ambient.playing) {
-        await startAmbient();
+      if (state.ambient.playing && (state.ambient.a === "user" || state.ambient.b === "user")) {
+        await startAmbientInternal();
+        await syncAmbientWithFocusState();
       }
     });
   
@@ -1185,7 +1280,6 @@
         userMusicObjectURL = null;
       }
   
-      // se estava selecionado user, volta para none
       if (state.ambient.a === "user") state.ambient.a = "none";
       if (state.ambient.b === "user") state.ambient.b = "none";
   
@@ -1193,28 +1287,43 @@
       el.userMusicFile.value = "";
       saveState();
   
-      if (state.ambient.playing) await startAmbient();
       renderAmbientOptions();
       toast(t9().toastSaved);
+  
+      if (state.ambient.playing) {
+        await startAmbientInternal();
+        await syncAmbientWithFocusState();
+      }
     });
   
-    // ---------- Init ----------
-    function initDailyCounters() {
-      // recalcula pomos do dia para evitar valores presos
-      const today = computeToday();
-      state.timer.pomosCompletedToday = today.pomos;
-      state.timer.distractionsToday = state.timer.distractionsToday || 0;
-      saveState();
+    // -------- Render all ----------
+    function renderAll() {
+      syncPlannerInputs();
+      renderActiveTaskSelect();
+      renderTimer();
+      renderTasks();
+      renderStats();
+      renderNotes();
+      renderHistory();
+      renderAmbientOptions();
+      renderAmbient();
     }
   
+    // Init top UI (labels)
     function initTopUI() {
       const t = t9();
       el.soundIcon.textContent = state.settings.sound ? "🔊" : "🔇";
       el.soundLabel.textContent = state.settings.sound ? t.soundOn : t.soundOff;
-  
       el.notifyLabel.textContent = state.settings.notifications ? t.notifyOff : t.notifyOn;
-  
       el.fsLabel.textContent = document.fullscreenElement ? t.exitFull : t.full;
+    }
+  
+    function initDailyCounters() {
+      // recalcula pomos do dia baseado no histórico
+      const today = computeToday();
+      state.timer.pomosCompletedToday = today.pomos;
+      state.timer.distractionsToday = state.timer.distractionsToday || 0;
+      saveState();
     }
   
     function init() {
@@ -1223,21 +1332,16 @@
       initTopUI();
       initDailyCounters();
   
-      // corrige timer se algo estiver inconsistente
       const expected = phaseSeconds(state.timer.phase);
       if (!state.timer.totalSec || state.timer.totalSec < 10) state.timer.totalSec = expected;
       if (!state.timer.remainingSec || state.timer.remainingSec > state.timer.totalSec) state.timer.remainingSec = state.timer.totalSec;
   
-      saveState();
-      renderAll();
-  
-      if (state.timer.running) startTick();
-  
-      // se a ambient estava tocando antes do refresh, por segurança não auto-play
-      // (browsers bloqueiam). Mantém o estado, mas pede clique no Play.
+      // não tentar autoplay após refresh (browser bloqueia)
       state.ambient.playing = false;
       saveState();
-      renderAmbient();
+  
+      renderAll();
+      if (state.timer.running) startTick();
     }
   
     init();

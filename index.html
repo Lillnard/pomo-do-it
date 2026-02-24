@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FocusFlow • Pomodoro</title>
+  <title>Pomo do it" • Pomodoro</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -29,7 +29,7 @@
           <span class="chip-text" id="themeLabel">Dark</span>
         </button>
 
-        <button class="chip" id="soundToggle" title="Som">
+        <button class="chip" id="soundToggle" title="Som do timer (beeps)">
           <span class="chip-ico" id="soundIcon">🔊</span>
           <span class="chip-text" id="soundLabel">On</span>
         </button>
@@ -171,7 +171,7 @@
         </div>
       </section>
 
-      <!-- INSIGHTS CARD (tabs) -->
+      <!-- INSIGHTS CARD -->
       <section class="card insights">
         <div class="card-head">
           <div>
@@ -183,6 +183,49 @@
             <button class="tab active" data-tab="stats" id="tabStats">Stats</button>
             <button class="tab" data-tab="notes" id="tabNotes">Notas</button>
             <button class="tab" data-tab="history" id="tabHistory">Histórico</button>
+          </div>
+        </div>
+
+        <!-- AMBIENT / MUSIC PANEL -->
+        <div class="ambient">
+          <div class="ambient-head">
+            <div>
+              <div class="ambient-title" id="ambientTitle">Som e música</div>
+              <div class="muted" id="ambientHint">Escolha um ambiente, mixe camadas ou envie sua própria música.</div>
+            </div>
+            <button class="btn tiny" id="ambientToggle"><span id="ambientState">Play</span></button>
+          </div>
+
+          <div class="ambient-grid">
+            <div class="field">
+              <label id="ambientALabel">Camada A</label>
+              <select id="ambientASelect"></select>
+            </div>
+
+            <div class="field">
+              <label id="ambientBLabel">Camada B</label>
+              <select id="ambientBSelect"></select>
+            </div>
+
+            <div class="field">
+              <label id="ambientVolLabel">Volume</label>
+              <input type="range" id="ambientVolume" min="0" max="100" value="35" />
+            </div>
+          </div>
+
+          <div class="ambient-upload">
+            <div class="field grow">
+              <label id="uploadLabel">Enviar sua música (MP3)</label>
+              <input type="file" id="userMusicFile" accept="audio/*" />
+            </div>
+            <button class="btn" id="clearUserMusicBtn" title="Remover música enviada">🧽 Limpar</button>
+          </div>
+
+          <div class="ambient-foot">
+            <div class="muted small" id="ambientNote">
+              Dica: “White Noise” funciona sem arquivo. Para os ambientes, coloque mp3 em /audio/.
+            </div>
+            <button class="btn" id="ambientStopBtn">⏹ Stop</button>
           </div>
         </div>
 
@@ -250,11 +293,7 @@
       </section>
     </main>
 
-    <!-- TOAST -->
     <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
-
-    <!-- PRINT AREA (hidden, used for PDF via print) -->
-    <section class="print" id="printArea" aria-hidden="true"></section>
   </div>
 
   <script src="script.js"></script>

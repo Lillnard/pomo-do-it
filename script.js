@@ -11,11 +11,94 @@
     const I18N = {
       pt: {
         brandSub: "Pomodoro inteligente para estudos",
+        dark: "Dark",
+        light: "Light",
+        soundOn: "On",
+        soundOff: "Off",
+        notifyEnable: "Ativar",
+        notifyEnabled: "Ativo",
+        full: "Full",
+        exitFull: "Exit",
+        drawerTitle: "Menu",
+        drawerLang: "Idioma",
+        drawerTheme: "Tema",
+        drawerSound: "Som",
+        drawerNotify: "Notificações",
+        drawerFull: "Tela cheia",
+        drawerTip: "Dica: ESC fecha o menu. Toque fora também.",
+        timerTitle: "Sessão",
+        timerSubtitle: "Planeje, foque e registre. Sem drama.",
+        miniCyclesK: "Ciclos",
+        miniFocusK: "Meta",
+        miniDistrK: "Distrações",
+        btnStart: "▶ Iniciar",
+        btnPause: "⏸ Pausar",
+        btnSkip: "⏭ Pular",
+        btnReset: "↺ Reset",
+        presetLabel: "Preset",
+        taskLinkLabel: "Tarefa ativa",
+        focusLabel: "Foco (min)",
+        breakLabel: "Pausa (min)",
+        longLabel: "Longa (min)",
+        cyclesLabel: "Ciclos",
+        goalLabel: "Meta 🍅",
+        autoLabel: "Auto",
+        sessionIntentLabel: "Plano da sessão (1 frase)",
+        sessionIntentPh: "Ex: Revisar funções e resolver 10 exercícios",
+        noTask: "(Sem tarefa)",
+        presetClassic: "Clássico (25/5, longa 15)",
+        presetDeep: "Deep Work (50/10, longa 20)",
+        presetSprint: "Sprint (15/3, longa 10)",
+        presetCustom: "Personalizado",
         hubTitle: "Central",
         hubSubtitle: "Tudo organizado em abas pra caber bonito.",
+        hubSelectAria: "Selecionar aba",
+        hubOptTasks: "Tarefas",
+        hubOptStats: "Metas",
+        hubOptNotes: "Notas",
+        hubOptHistory: "Histórico",
+        taskNamePh: "Nova tarefa (ex: Matemática, capítulo 3)",
+        taskEstTitle: "Pomodoros estimados",
+        addTaskBtn: "+ Adicionar",
+        clearDoneBtn: "🧹 Limpar concluídas",
+        seedBtn: "✨ Exemplo",
+        taskBtnSetTitle: "Definir ativa",
+        taskBtnPlusTitle: "+1 pomodoro",
+        taskBtnDelTitle: "Remover",
+        stFocusTodayK: "Foco hoje",
+        stPomosTodayK: "🍅 hoje",
+        stStreakK: "Streak",
+        stBestHourK: "Melhor hora",
+        minUnit: "min",
+        chartTitle: "Últimos 7 dias (🍅)",
+        chartLegend: "barra = pomodoros concluídos",
+        exportCsvBtn: "⬇ Exportar CSV",
+        printReportBtn: "🖨 Relatório (PDF)",
+        resetAllBtn: "🗑 Reset geral",
+        noteTitle: "Nota rápida",
+        noteHint: "No fim de cada foco, registre 1 insight. Aqui você pode anotar também.",
+        noteTextPh: "Ex: Entendi como aplicar a fórmula...",
+        saveNoteBtn: "💾 Salvar nota",
+        clearNoteBtn: "🧽 Limpar",
+        notesAria: "Lista de notas",
+        historyHint: "Registros dos ciclos (foco/pausa) com tarefa, plano e tempo.",
+        clearHistoryBtn: "🧹 Limpar histórico",
+        historyAria: "Histórico",
         musicTitle: "Som e música",
-        musicSubtitle: "Toca no foco, silencia na pausa. Com fade suave.",
+        musicSubtitle: "Ouça e concentre-se.",
+        ambientALabel: "Camada A",
+        ambientBLabel: "Camada B",
+        ambientVolLabel: "Volume",
+        uploadLabel: "Enviar sua música (MP3)",
+        clearUserMusicBtn: "🧽 Limpar",
+        focusOnlyLabel: "Auto-play só no FOCO",
+        fadeLabel: "Fade in/out automático",
+        dynamicPingLabel: "Som dinâmico (a cada 8 min)",
+        ambientNote: 'Dica: Você pode fazer um "blend" com seus sons preferidos, basta ativar a camada A e B simultanemante.',
+        ambientStopBtn: "⏹ Stop",
+        audioBlockHint: 'Se o navegador bloquear áudio automático, clique em “Play” uma vez.',
         none: "(Nenhum)",
+        nebulizer: "Inalador",
         user: "Minha música",
         white: "White noise",
         rain: "Chuva",
@@ -31,6 +114,7 @@
         toastNeedName: "Dê um nome pra tarefa 🙂",
         toastNotifDenied: "Notificações bloqueadas no navegador",
         toastNotifOn: "Notificações ativadas 🔔",
+        toastNotifOff: "Notificações desativadas",
         toastFocusEnd: "Foco finalizado! Hora de pausar.",
         toastBreakEnd: "Pausa finalizada! Volta pro foco.",
         toastLongEnd: "Pausa longa finalizada! Bora.",
@@ -38,26 +122,101 @@
         toastCsv: "CSV gerado ✅",
         toastResetAll: "Tudo resetado 🧼",
         toastHistoryCleared: "Histórico limpo 🧹",
-        noTask: "(Sem tarefa)",
-        dark: "Dark",
-        light: "Light",
-        soundOn: "On",
-        soundOff: "Off",
-        notifyOn: "Ativar",
-        notifyOff: "Ativo",
-        full: "Full",
-        exitFull: "Exit",
         phaseFocus: "FOCO",
         phaseBreak: "PAUSA",
         phaseLong: "PAUSA LONGA",
       },
+  
       en: {
         brandSub: "Smart Pomodoro for studying",
+        dark: "Dark",
+        light: "Light",
+        soundOn: "On",
+        soundOff: "Off",
+        notifyEnable: "Enable",
+        notifyEnabled: "Enabled",
+        full: "Full",
+        exitFull: "Exit",
+        drawerTitle: "Menu",
+        drawerLang: "Language",
+        drawerTheme: "Theme",
+        drawerSound: "Sound",
+        drawerNotify: "Notifications",
+        drawerFull: "Fullscreen",
+        drawerTip: "Tip: ESC closes the menu. Tap outside too.",
+        timerTitle: "Session",
+        timerSubtitle: "Plan, focus, and log. No drama.",
+        miniCyclesK: "Cycles",
+        miniFocusK: "Goal",
+        miniDistrK: "Distractions",
+        btnStart: "▶ Start",
+        btnPause: "⏸ Pause",
+        btnSkip: "⏭ Skip",
+        btnReset: "↺ Reset",
+        presetLabel: "Preset",
+        taskLinkLabel: "Active task",
+        focusLabel: "Focus (min)",
+        breakLabel: "Break (min)",
+        longLabel: "Long (min)",
+        cyclesLabel: "Cycles",
+        goalLabel: "Goal 🍅",
+        autoLabel: "Auto",
+        sessionIntentLabel: "Session plan (1 sentence)",
+        sessionIntentPh: "e.g., Review functions and solve 10 exercises",
+        noTask: "(No task)",
+        presetClassic: "Classic (25/5, long 15)",
+        presetDeep: "Deep Work (50/10, long 20)",
+        presetSprint: "Sprint (15/3, long 10)",
+        presetCustom: "Custom",
         hubTitle: "Hub",
-        hubSubtitle: "Tabbed layout to keep everything neat.",
+        hubSubtitle: "Everything organized into tabs that fit nicely.",
+        hubSelectAria: "Select tab",
+        hubOptTasks: "Tasks",
+        hubOptStats: "Goals",
+        hubOptNotes: "Notes",
+        hubOptHistory: "History",
+        taskNamePh: "New task (e.g., Math, chapter 3)",
+        taskEstTitle: "Estimated pomodoros",
+        addTaskBtn: "+ Add",
+        clearDoneBtn: "🧹 Clear completed",
+        seedBtn: "✨ Example",
+        taskBtnSetTitle: "Set active",
+        taskBtnPlusTitle: "+1 pomodoro",
+        taskBtnDelTitle: "Remove",
+        stFocusTodayK: "Focus today",
+        stPomosTodayK: "🍅 today",
+        stStreakK: "Streak",
+        stBestHourK: "Best hour",
+        minUnit: "min",
+        chartTitle: "Last 7 days (🍅)",
+        chartLegend: "bar = completed pomodoros",
+        exportCsvBtn: "⬇ Export CSV",
+        printReportBtn: "🖨 Report (PDF)",
+        resetAllBtn: "🗑 Reset all",
+        noteTitle: "Quick note",
+        noteHint: "At the end of each focus, record 1 insight. You can write here too.",
+        noteTextPh: "e.g., I understood how to apply the formula...",
+        saveNoteBtn: "💾 Save note",
+        clearNoteBtn: "🧽 Clear",
+        notesAria: "Notes list",
+        historyHint: "Cycle logs (focus/break) with task, plan, and time.",
+        clearHistoryBtn: "🧹 Clear history",
+        historyAria: "History",
         musicTitle: "Sound & music",
-        musicSubtitle: "Plays on focus, silent on breaks. Smooth fade.",
+        musicSubtitle: "Listen and focus.",
+        ambientALabel: "Layer A",
+        ambientBLabel: "Layer B",
+        ambientVolLabel: "Volume",
+        uploadLabel: "Upload your music (MP3)",
+        clearUserMusicBtn: "🧽 Clear",
+        focusOnlyLabel: "Auto-play only in FOCUS",
+        fadeLabel: "Auto fade in/out",
+        dynamicPingLabel: "Dynamic ping (every 8 min)",
+        ambientNote: 'Tip: You can create a "blend" by enabling layer A and B at the same time.',
+        ambientStopBtn: "⏹ Stop",
+        audioBlockHint: 'If the browser blocks autoplay, click “Play” once.',
         none: "(None)",
+        nebulizer: "Nebulizer",
         user: "My music",
         white: "White noise",
         rain: "Rain",
@@ -73,6 +232,7 @@
         toastNeedName: "Give your task a name 🙂",
         toastNotifDenied: "Notifications blocked by browser",
         toastNotifOn: "Notifications enabled 🔔",
+        toastNotifOff: "Notifications disabled",
         toastFocusEnd: "Focus finished! Break time.",
         toastBreakEnd: "Break finished! Back to focus.",
         toastLongEnd: "Long break finished! Let’s go.",
@@ -80,28 +240,19 @@
         toastCsv: "CSV created ✅",
         toastResetAll: "Everything reset 🧼",
         toastHistoryCleared: "History cleared 🧹",
-        noTask: "(No task)",
-        dark: "Dark",
-        light: "Light",
-        soundOn: "On",
-        soundOff: "Off",
-        notifyOn: "Enable",
-        notifyOff: "Enabled",
-        full: "Full",
-        exitFull: "Exit",
         phaseFocus: "FOCUS",
         phaseBreak: "BREAK",
         phaseLong: "LONG BREAK",
       }
     };
   
-    const LS_KEY = "focusflow_layout_audio_v1";
+    const LS_KEY = "focusflow_layout_audio_v2";
   
     const defaultState = () => ({
       settings: {
         lang: (navigator.language || "pt").toLowerCase().startsWith("pt") ? "pt" : "en",
         theme: "dark",
-        sound: true,            // beep timer + ping dinâmico
+        sound: true,
         notifications: false,
         auto: true
       },
@@ -183,6 +334,14 @@
       fullscreenBtn: $("#fullscreenBtn"),
       fsLabel: $("#fsLabel"),
   
+      drawerTitle: $("#drawerTitle"),
+      mLangTxt: $("#mLangTxt"),
+      mThemeTxt: $("#mThemeTxt"),
+      mSoundTxt: $("#mSoundTxt"),
+      mNotifyTxt: $("#mNotifyTxt"),
+      mFullTxt: $("#mFullTxt"),
+      drawerTip: $("#drawerTip"),
+  
       phaseBadge: $("#phaseBadge"),
       timeText: $("#timeText"),
       progressBar: $("#progressBar"),
@@ -191,13 +350,27 @@
       goalPomos: $("#goalPomos"),
       distractions: $("#distractions"),
   
+      timerTitle: $("#timerTitle"),
+      timerSubtitle: $("#timerSubtitle"),
+      miniCyclesK: $("#miniCyclesK"),
+      miniFocusK: $("#miniFocusK"),
+      miniDistrK: $("#miniDistrK"),
+  
       startBtn: $("#startBtn"),
       pauseBtn: $("#pauseBtn"),
       skipBtn: $("#skipBtn"),
       resetBtn: $("#resetBtn"),
   
+      presetLabel: $("#presetLabel"),
+      taskLinkLabel: $("#taskLinkLabel"),
       presetSelect: $("#presetSelect"),
       activeTaskSelect: $("#activeTaskSelect"),
+      focusLabel: $("#focusLabel"),
+      breakLabel: $("#breakLabel"),
+      longLabel: $("#longLabel"),
+      cyclesLabel: $("#cyclesLabel"),
+      goalLabel: $("#goalLabel"),
+      autoLabel: $("#autoLabel"),
       focusMin: $("#focusMin"),
       breakMin: $("#breakMin"),
       longMin: $("#longMin"),
@@ -205,15 +378,14 @@
       goalCount: $("#goalCount"),
       autoToggle: $("#autoToggle"),
       autoState: $("#autoState"),
+      sessionIntentLabel: $("#sessionIntentLabel"),
       sessionIntent: $("#sessionIntent"),
       saveSessionBtn: $("#saveSessionBtn"),
   
       hubTitle: $("#hubTitle"),
       hubSubtitle: $("#hubSubtitle"),
-      musicTitle: $("#musicTitle"),
-      musicSubtitle: $("#musicSubtitle"),
-  
-      tabs: $$(".tab"),
+      hubSelect: $("#hubSelect"),
+      hubSelectLabel: $("#hubSelectLabel"),
       panes: {
         tasks: $("#pane-tasks"),
         stats: $("#pane-stats"),
@@ -229,6 +401,13 @@
       clearDoneBtn: $("#clearDoneBtn"),
       seedBtn: $("#seedBtn"),
   
+      stFocusTodayK: $("#stFocusTodayK"),
+      stPomosTodayK: $("#stPomosTodayK"),
+      stStreakK: $("#stStreakK"),
+      stBestHourK: $("#stBestHourK"),
+      minUnit: $("#minUnit"),
+      chartTitle: $("#chartTitle"),
+      chartLegend: $("#chartLegend"),
       focusToday: $("#focusToday"),
       pomosToday: $("#pomosToday"),
       streak: $("#streak"),
@@ -238,28 +417,64 @@
       printReportBtn: $("#printReportBtn"),
       resetAllBtn: $("#resetAllBtn"),
   
+      noteTitle: $("#noteTitle"),
+      noteHint: $("#noteHint"),
       noteText: $("#noteText"),
       saveNoteBtn: $("#saveNoteBtn"),
       clearNoteBtn: $("#clearNoteBtn"),
       notesList: $("#notesList"),
   
+      historyHint: $("#historyHint"),
       historyList: $("#historyList"),
       clearHistoryBtn: $("#clearHistoryBtn"),
   
+      musicTitle: $("#musicTitle"),
+      musicSubtitle: $("#musicSubtitle"),
+  
       ambientToggle: $("#ambientToggle"),
       ambientState: $("#ambientState"),
+      ambientALabel: $("#ambientALabel"),
+      ambientBLabel: $("#ambientBLabel"),
+      ambientVolLabel: $("#ambientVolLabel"),
       ambientASelect: $("#ambientASelect"),
       ambientBSelect: $("#ambientBSelect"),
       ambientVolume: $("#ambientVolume"),
       ambientStopBtn: $("#ambientStopBtn"),
+      uploadLabel: $("#uploadLabel"),
       userMusicFile: $("#userMusicFile"),
       clearUserMusicBtn: $("#clearUserMusicBtn"),
   
       focusOnlyToggle: $("#focusOnlyToggle"),
       fadeToggle: $("#fadeToggle"),
       dynamicPingToggle: $("#dynamicPingToggle"),
+      focusOnlyLabel: $("#focusOnlyLabel"),
+      fadeLabel: $("#fadeLabel"),
+      dynamicPingLabel: $("#dynamicPingLabel"),
+      ambientNote: $("#ambientNote"),
+      audioBlockHint: $("#audioBlockHint"),
   
       toast: $("#toast"),
+    };
+  
+    const drawer = {
+      hambBtn: $("#hambBtn"),
+      menu: $("#mobileMenu"),
+      backdrop: $("#drawerBackdrop"),
+      close: $("#drawerClose"),
+  
+      mLang: $("#mLang"),
+      mTheme: $("#mTheme"),
+      mSound: $("#mSound"),
+      mNotify: $("#mNotify"),
+      mFull: $("#mFull"),
+  
+      mLangVal: $("#mLangVal"),
+      mThemeVal: $("#mThemeVal"),
+      mThemeIco: $("#mThemeIco"),
+      mSoundVal: $("#mSoundVal"),
+      mSoundIco: $("#mSoundIco"),
+      mNotifyVal: $("#mNotifyVal"),
+      mFullVal: $("#mFullVal"),
     };
   
     let toastTimer = null;
@@ -270,7 +485,6 @@
       toastTimer = setTimeout(() => el.toast.classList.remove("show"), 1800);
     }
   
-    // Theme + lang
     function applyTheme() {
       document.documentElement.dataset.theme = state.settings.theme === "light" ? "light" : "dark";
       const t = t9();
@@ -278,21 +492,111 @@
       el.themeLabel.textContent = state.settings.theme === "light" ? t.light : t.dark;
     }
   
+    function setSelectOptionText(selectEl, value, text) {
+      if (!selectEl) return;
+      const opt = Array.from(selectEl.options).find(o => o.value === value);
+      if (opt) opt.textContent = text;
+    }
+  
     function applyLang() {
       const t = t9();
+  
       el.langLabel.textContent = state.settings.lang.toUpperCase();
       el.brandSub.textContent = t.brandSub;
+  
+      if (el.drawerTitle) el.drawerTitle.textContent = t.drawerTitle;
+      if (el.mLangTxt) el.mLangTxt.textContent = t.drawerLang;
+      if (el.mThemeTxt) el.mThemeTxt.textContent = t.drawerTheme;
+      if (el.mSoundTxt) el.mSoundTxt.textContent = t.drawerSound;
+      if (el.mNotifyTxt) el.mNotifyTxt.textContent = t.drawerNotify;
+      if (el.mFullTxt) el.mFullTxt.textContent = t.drawerFull;
+      if (el.drawerTip) el.drawerTip.textContent = t.drawerTip;
+  
+      el.timerTitle.textContent = t.timerTitle;
+      el.timerSubtitle.textContent = t.timerSubtitle;
+      el.miniCyclesK.textContent = t.miniCyclesK;
+      el.miniFocusK.textContent = t.miniFocusK;
+      el.miniDistrK.textContent = t.miniDistrK;
+  
+      el.startBtn.textContent = t.btnStart;
+      el.pauseBtn.textContent = t.btnPause;
+      el.skipBtn.textContent = t.btnSkip;
+      el.resetBtn.textContent = t.btnReset;
+  
+      el.presetLabel.textContent = t.presetLabel;
+      el.taskLinkLabel.textContent = t.taskLinkLabel;
+      el.focusLabel.textContent = t.focusLabel;
+      el.breakLabel.textContent = t.breakLabel;
+      el.longLabel.textContent = t.longLabel;
+      el.cyclesLabel.textContent = t.cyclesLabel;
+      el.goalLabel.textContent = t.goalLabel;
+      el.autoLabel.textContent = t.autoLabel;
+      el.sessionIntentLabel.textContent = t.sessionIntentLabel;
+      el.sessionIntent.placeholder = t.sessionIntentPh;
+  
+      setSelectOptionText(el.presetSelect, "classic", t.presetClassic);
+      setSelectOptionText(el.presetSelect, "deep", t.presetDeep);
+      setSelectOptionText(el.presetSelect, "sprint", t.presetSprint);
+      setSelectOptionText(el.presetSelect, "custom", t.presetCustom);
+  
       el.hubTitle.textContent = t.hubTitle;
       el.hubSubtitle.textContent = t.hubSubtitle;
-      el.musicTitle.textContent = t.musicTitle;
-      el.musicSubtitle.textContent = t.musicSubtitle;
+      if (el.hubSelectLabel) el.hubSelectLabel.textContent = t.hubSelectAria;
+      if (el.hubSelect) el.hubSelect.setAttribute("aria-label", t.hubSelectAria);
+  
+      setSelectOptionText(el.hubSelect, "tasks", t.hubOptTasks);
+      setSelectOptionText(el.hubSelect, "stats", t.hubOptStats);
+      setSelectOptionText(el.hubSelect, "notes", t.hubOptNotes);
+      setSelectOptionText(el.hubSelect, "history", t.hubOptHistory);
+  
+      el.taskName.placeholder = t.taskNamePh;
+      el.taskEst.title = t.taskEstTitle;
+      el.addTaskBtn.textContent = t.addTaskBtn;
+      el.clearDoneBtn.textContent = t.clearDoneBtn;
+      el.seedBtn.textContent = t.seedBtn;
+  
+      el.stFocusTodayK.textContent = t.stFocusTodayK;
+      el.stPomosTodayK.textContent = t.stPomosTodayK;
+      el.stStreakK.textContent = t.stStreakK;
+      el.stBestHourK.textContent = t.stBestHourK;
+      if (el.minUnit) el.minUnit.textContent = t.minUnit;
+      el.chartTitle.textContent = t.chartTitle;
+      el.chartLegend.textContent = t.chartLegend;
+      el.exportCsvBtn.textContent = t.exportCsvBtn;
+      el.printReportBtn.textContent = t.printReportBtn;
+      el.resetAllBtn.textContent = t.resetAllBtn;
+  
+      el.noteTitle.textContent = t.noteTitle;
+      el.noteHint.textContent = t.noteHint;
+      el.noteText.placeholder = t.noteTextPh;
+      el.saveNoteBtn.textContent = t.saveNoteBtn;
+      el.clearNoteBtn.textContent = t.clearNoteBtn;
+      if (el.notesList) el.notesList.setAttribute("aria-label", t.notesAria);
+  
+      el.historyHint.textContent = t.historyHint;
+      el.clearHistoryBtn.textContent = t.clearHistoryBtn;
+      if (el.historyList) el.historyList.setAttribute("aria-label", t.historyAria);
+  
+      if (el.musicTitle) el.musicTitle.textContent = t.musicTitle;
+      if (el.musicSubtitle) el.musicSubtitle.textContent = t.musicSubtitle;
+      if (el.ambientALabel) el.ambientALabel.textContent = t.ambientALabel;
+      if (el.ambientBLabel) el.ambientBLabel.textContent = t.ambientBLabel;
+      if (el.ambientVolLabel) el.ambientVolLabel.textContent = t.ambientVolLabel;
+      if (el.uploadLabel) el.uploadLabel.textContent = t.uploadLabel;
+      if (el.clearUserMusicBtn) el.clearUserMusicBtn.textContent = t.clearUserMusicBtn;
+      if (el.focusOnlyLabel) el.focusOnlyLabel.textContent = t.focusOnlyLabel;
+      if (el.fadeLabel) el.fadeLabel.textContent = t.fadeLabel;
+      if (el.dynamicPingLabel) el.dynamicPingLabel.textContent = t.dynamicPingLabel;
+      if (el.ambientNote) el.ambientNote.textContent = t.ambientNote;
+      if (el.ambientStopBtn) el.ambientStopBtn.textContent = t.ambientStopBtn;
+      if (el.audioBlockHint) el.audioBlockHint.textContent = t.audioBlockHint;
   
       renderAmbientOptions();
       renderAmbient();
       renderTimer();
+      syncDrawerLabels();
     }
   
-    // Notifications
     function notify(title, body) {
       if (!state.settings.notifications) return;
       if (!("Notification" in window)) return;
@@ -300,7 +604,6 @@
       try { new Notification(title, { body }); } catch {}
     }
   
-    // AudioContext for beeps and ping
     let audioCtx = null;
     function ensureAudioContext() {
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
@@ -340,7 +643,6 @@
       } catch {}
     }
   
-    // Ping suave a cada 8 min (FOCO)
     function focusPing() {
       if (!state.ambient.dynamicPing) return;
       if (!state.settings.sound) return;
@@ -365,17 +667,18 @@
       } catch {}
     }
   
-    // Tabs hub
-    el.tabs.forEach(btn => {
-      btn.addEventListener("click", () => {
-        el.tabs.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        const key = btn.dataset.tab;
-        Object.entries(el.panes).forEach(([k, pane]) => pane.classList.toggle("active", k === key));
-      });
-    });
+    function setHubPane(key) {
+      Object.entries(el.panes).forEach(([k, pane]) => pane.classList.toggle("active", k === key));
+      if (el.hubSelect) el.hubSelect.value = key;
+    }
   
-    // Toggles top
+    if (el.hubSelect) {
+      el.hubSelect.addEventListener("change", () => {
+        const key = el.hubSelect.value;
+        setHubPane(key);
+      });
+    }
+  
     el.langToggle.addEventListener("click", () => {
       state.settings.lang = state.settings.lang === "pt" ? "en" : "pt";
       saveState();
@@ -387,6 +690,7 @@
       state.settings.theme = state.settings.theme === "light" ? "dark" : "light";
       saveState();
       applyTheme();
+      syncDrawerLabels();
     });
   
     el.soundToggle.addEventListener("click", () => {
@@ -395,17 +699,19 @@
       saveState();
       el.soundIcon.textContent = state.settings.sound ? "🔊" : "🔇";
       el.soundLabel.textContent = state.settings.sound ? t.soundOn : t.soundOff;
+      syncDrawerLabels();
     });
   
     el.notifyBtn.addEventListener("click", async () => {
       const t = t9();
-      if (!("Notification" in window)) { toast(t.toastNotifDenied); return; }
+      if (!("Notification" in window)) { toast(t.toastNotifDenied); syncDrawerLabels(); return; }
   
       if (Notification.permission === "granted") {
         state.settings.notifications = !state.settings.notifications;
         saveState();
-        el.notifyLabel.textContent = state.settings.notifications ? t.notifyOff : t.notifyOn;
-        toast(state.settings.notifications ? t.toastNotifOn : t.toastSaved);
+        el.notifyLabel.textContent = state.settings.notifications ? t.notifyEnabled : t.notifyEnable;
+        toast(state.settings.notifications ? t.toastNotifOn : t.toastNotifOff);
+        syncDrawerLabels();
         return;
       }
   
@@ -413,9 +719,10 @@
       if (res === "granted") {
         state.settings.notifications = true;
         saveState();
-        el.notifyLabel.textContent = t.notifyOff;
+        el.notifyLabel.textContent = t.notifyEnabled;
         toast(t.toastNotifOn);
       } else toast(t.toastNotifDenied);
+      syncDrawerLabels();
     });
   
     el.fullscreenBtn.addEventListener("click", async () => {
@@ -425,10 +732,13 @@
         else await document.exitFullscreen();
         el.fsLabel.textContent = document.fullscreenElement ? t.exitFull : t.full;
       } catch {}
+      syncDrawerLabels();
     });
+  
     document.addEventListener("fullscreenchange", () => {
       const t = t9();
       el.fsLabel.textContent = document.fullscreenElement ? t.exitFull : t.full;
+      syncDrawerLabels();
     });
   
     // -------- TIMER ----------
@@ -464,7 +774,7 @@
       if (tickHandle) { clearInterval(tickHandle); tickHandle = null; }
       saveState();
       renderAll();
-      syncAmbientWithFocusState(); // garante silêncio/padrão
+      syncAmbientWithFocusState();
     }
   
     function startTick() {
@@ -480,7 +790,6 @@
   
         state.timer.remainingSec = Math.max(0, state.timer.remainingSec - dt);
   
-        // ping dinâmico no foco
         if (state.timer.phase === "focus" && state.timer.running && state.ambient.dynamicPing) {
           const elapsed = state.timer.totalSec - state.timer.remainingSec;
           if (elapsed >= state.timer.nextPingAtSec) {
@@ -607,7 +916,6 @@
       el.autoState.textContent = state.settings.auto ? "On" : "Off";
     }
   
-    // Planner events
     el.presetSelect.addEventListener("change", () => {
       const v = el.presetSelect.value;
       state.planner.preset = v;
@@ -709,6 +1017,7 @@
     }
   
     function renderTasks() {
+      const t = t9();
       el.tasksCountPill.textContent = state.tasks.length;
       el.taskList.innerHTML = "";
   
@@ -727,9 +1036,9 @@
             <div class="pbar"><div style="width:${clamp(pct,0,100)}%"></div></div>
           </div>
           <div class="task-right">
-            <button class="iconbtn" data-act="set" title="Definir ativa">🎯</button>
-            <button class="iconbtn" data-act="plus" title="+1 pomodoro">+1</button>
-            <button class="iconbtn" data-act="del" title="Remover">✕</button>
+            <button class="iconbtn" data-act="set" title="${escapeHTML(t.taskBtnSetTitle)}">🎯</button>
+            <button class="iconbtn" data-act="plus" title="${escapeHTML(t.taskBtnPlusTitle)}">+1</button>
+            <button class="iconbtn" data-act="del" title="${escapeHTML(t.taskBtnDelTitle)}">✕</button>
           </div>
         `;
   
@@ -931,6 +1240,7 @@
     }
   
     function printReport() {
+      const t = t9();
       const today = computeToday();
       const streak = computeStreak();
       const bestHour = computeBestHour();
@@ -947,10 +1257,10 @@
         <h1>FocusFlow Report</h1>
         <div class="sub">${todayKey()}</div>
         <div class="grid">
-          <div class="box"><div class="k">Focus today</div><div class="v">${today.minutes} min</div></div>
-          <div class="box"><div class="k">Pomodoros today</div><div class="v">${today.pomos}</div></div>
-          <div class="box"><div class="k">Streak</div><div class="v">${streak}</div></div>
-          <div class="box"><div class="k">Best hour</div><div class="v">${bestHour}</div></div>
+          <div class="box"><div class="k">${t.stFocusTodayK}</div><div class="v">${today.minutes} ${t.minUnit}</div></div>
+          <div class="box"><div class="k">${t.stPomosTodayK}</div><div class="v">${today.pomos}</div></div>
+          <div class="box"><div class="k">${t.stStreakK}</div><div class="v">${streak}</div></div>
+          <div class="box"><div class="k">${t.stBestHourK}</div><div class="v">${bestHour}</div></div>
         </div>
         <div class="sub" style="margin-top:14px;">Generated locally (LocalStorage)</div>
       `;
@@ -990,10 +1300,10 @@
       applyLang();
       toast(t9().toastResetAll);
       renderAll();
-      // por padrão, não tenta autoplay
       state.ambient.playing = false;
       saveState();
       renderAmbient();
+      syncDrawerLabels();
     });
   
     // -------- AUDIO AMBIENT (fade + focusOnly + mix) ----------
@@ -1016,6 +1326,13 @@
     let noiseNode = null;
     let noiseGain = null;
   
+    // ✅ NOVO: inalador (nebulizer) procedural
+    let nebNode = null;
+    let nebGain = null;
+    let nebFilter = null;
+    let nebLfo = null;
+    let nebLfoGain = null;
+  
     let fadeMul = 0;
     let fadeRAF = null;
   
@@ -1028,6 +1345,7 @@
       bPlayer.volume = v;
       userPlayer.volume = v;
       if (noiseGain) noiseGain.gain.value = v * 0.65;
+      if (nebGain)  nebGain.gain.value  = v * 0.65; // ✅ NOVO
     }
   
     function stopWhiteNoise() {
@@ -1063,14 +1381,73 @@
       noiseGain = g;
     }
   
+    // ✅ NOVO: start/stop nebulizer
+    function stopNebulizer() {
+      if (nebNode) {
+        try { nebNode.stop(); } catch {}
+        nebNode = null;
+      }
+      if (nebLfo) {
+        try { nebLfo.stop(); } catch {}
+        nebLfo = null;
+      }
+      if (nebGain) { try { nebGain.disconnect(); } catch {} nebGain = null; }
+      if (nebFilter) { try { nebFilter.disconnect(); } catch {} nebFilter = null; }
+      if (nebLfoGain) { try { nebLfoGain.disconnect(); } catch {} nebLfoGain = null; }
+    }
+  
+    function startNebulizer() {
+      const ctx = ensureAudioContext();
+  
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.35; // mais suave que white
+      }
+  
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      src.loop = true;
+  
+      const bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 950;
+      bp.Q.value = 0.85;
+  
+      const g = ctx.createGain();
+      g.gain.value = (baseVol01() * fadeMul) * 0.65;
+  
+      const lfo = ctx.createOscillator();
+      lfo.type = "sine";
+      lfo.frequency.value = 0.32;
+  
+      const lfoG = ctx.createGain();
+      lfoG.gain.value = 0.08;
+  
+      lfo.connect(lfoG).connect(g.gain);
+  
+      src.connect(bp).connect(g).connect(ctx.destination);
+  
+      src.start();
+      lfo.start();
+  
+      nebNode = src;
+      nebFilter = bp;
+      nebGain = g;
+      nebLfo = lfo;
+      nebLfoGain = lfoG;
+    }
+  
     function stopAllAmbientSources() {
       aPlayer.pause(); bPlayer.pause(); userPlayer.pause();
       aPlayer.currentTime = 0; bPlayer.currentTime = 0; userPlayer.currentTime = 0;
       stopWhiteNoise();
+      stopNebulizer(); // ✅ NOVO
     }
   
     function setPlayerSourceByKey(player, key) {
-      if (key === "none" || key === "white" || key === "user") {
+      if (key === "none" || key === "white" || key === "user" || key === "nebulizer") { // ✅ inclui nebulizer
         player.pause();
         player.src = "";
         return;
@@ -1083,6 +1460,12 @@
   
       if (key === "white") {
         if (!noiseNode) startWhiteNoise();
+        return;
+      }
+  
+      // ✅ NOVO: inalador procedural
+      if (key === "nebulizer") {
+        if (!nebNode) startNebulizer();
         return;
       }
   
@@ -1145,7 +1528,6 @@
     }
   
     async function toggleAmbientManual() {
-      // garante desbloqueio de áudio pelo gesto
       try { ensureAudioContext(); } catch {}
       if (state.ambient.playing) await stopAmbientInternal();
       else await startAmbientInternal();
@@ -1170,6 +1552,7 @@
       const options = [
         { v: "none",  label: t.none },
         { v: "white", label: t.white },
+        { v: "nebulizer", label: t.nebulizer }, // ✅ Inalador agora funciona
         { v: "rain",  label: t.rain },
         { v: "ocean", label: t.ocean },
         { v: "stream",label: t.stream },
@@ -1180,6 +1563,7 @@
       ];
   
       const build = (sel, current) => {
+        if (!sel) return;
         sel.innerHTML = "";
         for (const o of options) {
           const opt = document.createElement("option");
@@ -1192,28 +1576,22 @@
   
       build(el.ambientASelect, state.ambient.a);
       build(el.ambientBSelect, state.ambient.b);
-      el.ambientVolume.value = String(state.ambient.volume ?? 35);
+      if (el.ambientVolume) el.ambientVolume.value = String(state.ambient.volume ?? 35);
   
-      el.focusOnlyToggle.checked = !!state.ambient.focusOnly;
-      el.fadeToggle.checked = !!state.ambient.fade;
-      el.dynamicPingToggle.checked = !!state.ambient.dynamicPing;
+      if (el.focusOnlyToggle) el.focusOnlyToggle.checked = !!state.ambient.focusOnly;
+      if (el.fadeToggle) el.fadeToggle.checked = !!state.ambient.fade;
+      if (el.dynamicPingToggle) el.dynamicPingToggle.checked = !!state.ambient.dynamicPing;
     }
   
     function renderAmbient() {
       const t = t9();
-      el.ambientState.textContent = state.ambient.playing ? t.pauseAmbient : t.play;
+      if (el.ambientState) el.ambientState.textContent = state.ambient.playing ? t.pauseAmbient : t.play;
     }
   
-    // Ambient events
-    el.ambientToggle.addEventListener("click", async () => {
-      await toggleAmbientManual();
-    });
+    if (el.ambientToggle) el.ambientToggle.addEventListener("click", async () => { await toggleAmbientManual(); });
+    if (el.ambientStopBtn) el.ambientStopBtn.addEventListener("click", async () => { await stopAmbientInternal(); });
   
-    el.ambientStopBtn.addEventListener("click", async () => {
-      await stopAmbientInternal();
-    });
-  
-    el.ambientASelect.addEventListener("change", async () => {
+    if (el.ambientASelect) el.ambientASelect.addEventListener("change", async () => {
       state.ambient.a = el.ambientASelect.value;
       saveState();
       renderAmbientOptions();
@@ -1221,7 +1599,7 @@
       await syncAmbientWithFocusState();
     });
   
-    el.ambientBSelect.addEventListener("change", async () => {
+    if (el.ambientBSelect) el.ambientBSelect.addEventListener("change", async () => {
       state.ambient.b = el.ambientBSelect.value;
       saveState();
       renderAmbientOptions();
@@ -1229,31 +1607,31 @@
       await syncAmbientWithFocusState();
     });
   
-    el.ambientVolume.addEventListener("input", () => {
+    if (el.ambientVolume) el.ambientVolume.addEventListener("input", () => {
       state.ambient.volume = parseInt(el.ambientVolume.value || "35", 10);
       saveState();
       setEffectiveVolume(fadeMul);
     });
   
-    el.focusOnlyToggle.addEventListener("change", async () => {
+    if (el.focusOnlyToggle) el.focusOnlyToggle.addEventListener("change", async () => {
       state.ambient.focusOnly = !!el.focusOnlyToggle.checked;
       saveState();
       await syncAmbientWithFocusState();
     });
   
-    el.fadeToggle.addEventListener("change", () => {
+    if (el.fadeToggle) el.fadeToggle.addEventListener("change", () => {
       state.ambient.fade = !!el.fadeToggle.checked;
       saveState();
     });
   
-    el.dynamicPingToggle.addEventListener("change", () => {
+    if (el.dynamicPingToggle) el.dynamicPingToggle.addEventListener("change", () => {
       state.ambient.dynamicPing = !!el.dynamicPingToggle.checked;
       saveState();
     });
   
     // Upload do usuário
     let userMusicObjectURL = null;
-    el.userMusicFile.addEventListener("change", async () => {
+    if (el.userMusicFile) el.userMusicFile.addEventListener("change", async () => {
       const file = el.userMusicFile.files?.[0];
       if (!file) return;
   
@@ -1272,7 +1650,7 @@
       }
     });
   
-    el.clearUserMusicBtn.addEventListener("click", async () => {
+    if (el.clearUserMusicBtn) el.clearUserMusicBtn.addEventListener("click", async () => {
       userPlayer.pause();
       userPlayer.src = "";
       if (userMusicObjectURL) {
@@ -1284,7 +1662,7 @@
       if (state.ambient.b === "user") state.ambient.b = "none";
   
       state.ambient.userName = "";
-      el.userMusicFile.value = "";
+      if (el.userMusicFile) el.userMusicFile.value = "";
       saveState();
   
       renderAmbientOptions();
@@ -1295,6 +1673,47 @@
         await syncAmbientWithFocusState();
       }
     });
+  
+    // ---------- Drawer (mobile) ----------
+    function openDrawer() {
+      if (!drawer.menu) return;
+      drawer.backdrop.hidden = false;
+      drawer.menu.classList.add("open");
+      drawer.menu.setAttribute("aria-hidden", "false");
+      syncDrawerLabels();
+    }
+    function closeDrawer() {
+      if (!drawer.menu) return;
+      drawer.menu.classList.remove("open");
+      drawer.menu.setAttribute("aria-hidden", "true");
+      drawer.backdrop.hidden = true;
+    }
+  
+    function syncDrawerLabels() {
+      if (!drawer.mLangVal) return;
+      const t = t9();
+      drawer.mLangVal.textContent = state.settings.lang.toUpperCase();
+      drawer.mThemeVal.textContent = state.settings.theme === "light" ? t.light : t.dark;
+      drawer.mThemeIco.textContent = state.settings.theme === "light" ? "☀️" : "🌙";
+      drawer.mSoundVal.textContent = state.settings.sound ? t.soundOn : t.soundOff;
+      drawer.mSoundIco.textContent = state.settings.sound ? "🔊" : "🔇";
+      drawer.mNotifyVal.textContent = state.settings.notifications ? "On" : "Off";
+      drawer.mFullVal.textContent = document.fullscreenElement ? "On" : "Off";
+    }
+  
+    if (drawer.hambBtn) drawer.hambBtn.addEventListener("click", openDrawer);
+    if (drawer.close) drawer.close.addEventListener("click", closeDrawer);
+    if (drawer.backdrop) drawer.backdrop.addEventListener("click", closeDrawer);
+  
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeDrawer();
+    });
+  
+    if (drawer.mLang) drawer.mLang.addEventListener("click", () => { el.langToggle.click(); syncDrawerLabels(); closeDrawer(); });
+    if (drawer.mTheme) drawer.mTheme.addEventListener("click", () => { el.themeToggle.click(); syncDrawerLabels(); });
+    if (drawer.mSound) drawer.mSound.addEventListener("click", () => { el.soundToggle.click(); syncDrawerLabels(); });
+    if (drawer.mNotify) drawer.mNotify.addEventListener("click", () => { el.notifyBtn.click(); syncDrawerLabels(); });
+    if (drawer.mFull) drawer.mFull.addEventListener("click", () => { el.fullscreenBtn.click(); syncDrawerLabels(); });
   
     // -------- Render all ----------
     function renderAll() {
@@ -1307,19 +1726,19 @@
       renderHistory();
       renderAmbientOptions();
       renderAmbient();
+      syncDrawerLabels();
     }
   
-    // Init top UI (labels)
     function initTopUI() {
       const t = t9();
       el.soundIcon.textContent = state.settings.sound ? "🔊" : "🔇";
       el.soundLabel.textContent = state.settings.sound ? t.soundOn : t.soundOff;
-      el.notifyLabel.textContent = state.settings.notifications ? t.notifyOff : t.notifyOn;
+      el.notifyLabel.textContent = state.settings.notifications ? t.notifyEnabled : t.notifyEnable;
       el.fsLabel.textContent = document.fullscreenElement ? t.exitFull : t.full;
+      syncDrawerLabels();
     }
   
     function initDailyCounters() {
-      // recalcula pomos do dia baseado no histórico
       const today = computeToday();
       state.timer.pomosCompletedToday = today.pomos;
       state.timer.distractionsToday = state.timer.distractionsToday || 0;
@@ -1332,11 +1751,12 @@
       initTopUI();
       initDailyCounters();
   
+      setHubPane(el.hubSelect?.value || "tasks");
+  
       const expected = phaseSeconds(state.timer.phase);
       if (!state.timer.totalSec || state.timer.totalSec < 10) state.timer.totalSec = expected;
       if (!state.timer.remainingSec || state.timer.remainingSec > state.timer.totalSec) state.timer.remainingSec = state.timer.totalSec;
   
-      // não tentar autoplay após refresh (browser bloqueia)
       state.ambient.playing = false;
       saveState();
   

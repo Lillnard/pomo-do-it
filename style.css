@@ -67,6 +67,8 @@
     background: linear-gradient(180deg, var(--panel2), var(--panel));
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+    position: relative;
+    z-index: 40;
   }
   
   .brand{ display:flex; align-items:center; gap: 12px; }
@@ -80,6 +82,7 @@
   .brand-name{ font-weight: 800; letter-spacing: 0.3px; font-size: 16px; }
   .brand-sub{ font-size: 12px; color: var(--muted); margin-top: 2px; }
   
+  /* Desktop actions */
   .top-actions{ display:flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
   .chip{
     border: 1px solid var(--border);
@@ -99,6 +102,118 @@
   .chip-ico{ font-size: 14px; }
   .chip-text{ font-size: 12px; font-weight: 700; opacity: 0.9; }
   
+  /* Hamburger (mobile) */
+  .hamb{
+    display:none;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.07);
+    cursor: pointer;
+    user-select:none;
+    transition: transform 160ms ease, background 160ms ease;
+  }
+  .hamb:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.10); }
+  .hamb:active{ transform: translateY(0px); }
+  .hamb-lines{
+    width: 18px;
+    height: 12px;
+    display:block;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hamb-lines::before,
+  .hamb-lines::after,
+  .hamb-lines{
+    background: transparent;
+  }
+  .hamb-lines::before,
+  .hamb-lines::after{
+    content:"";
+    position:absolute;
+    left:0; right:0;
+    height:2px;
+    border-radius: 99px;
+    background: var(--text);
+    opacity: 0.9;
+  }
+  .hamb-lines::before{ top:0; }
+  .hamb-lines::after{ bottom:0; }
+  .hamb-lines{
+    border-top: 2px solid var(--text);
+    border-radius: 99px;
+    opacity: 0.9;
+    top: 5px;
+  }
+  
+  /* Drawer */
+  .drawer-backdrop{
+    position: fixed;
+    inset: 0;
+    background: rgba(10,12,18,0.55);
+    backdrop-filter: blur(6px);
+    z-index: 60;
+  }
+  
+  .drawer{
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    width: min(340px, calc(100vw - 24px));
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--panel2), var(--panel));
+    box-shadow: var(--shadow);
+    padding: 12px;
+    z-index: 70;
+    transform: translateY(-6px) scale(0.98);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+  .drawer.open{
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+    pointer-events: auto;
+  }
+  .drawer-head{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap: 10px;
+  }
+  .drawer-title{
+    font-weight: 900;
+    letter-spacing: 0.2px;
+  }
+  .drawer-items{
+    margin-top: 10px;
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .drawer-item{
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    padding: 12px;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    cursor:pointer;
+    font-weight: 900;
+  }
+  .drawer-item:hover{ background: rgba(255,255,255,0.10); }
+  .di-left{ display:flex; gap: 10px; align-items:center; }
+  .di-ico{ width: 22px; text-align:center; }
+  .di-txt{ font-size: 12px; }
+  .di-right{ font-size: 12px; color: var(--muted); font-weight: 900; }
+  .drawer-foot{ margin-top: 10px; }
+  
+  /* Layout grid */
   .grid{
     flex: 1;
     display:grid;
@@ -211,13 +326,14 @@
     border-color: rgba(251,113,133,0.35);
     background: linear-gradient(180deg, rgba(251,113,133,0.18), rgba(255,255,255,0.06));
   }
-  .btn.tiny{ width: 100%; padding: 10px 10px; }
+  .btn.tiny{ width: 50%; padding: 10px 10px; }
   
   .row{ display:flex; gap: 10px; }
   .row.three{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .field{ display:flex; flex-direction: column; gap: 6px; min-width: 0; }
   .field.grow{ flex: 1; }
   label{ font-size: 11px; color: var(--muted); font-weight: 800; }
+  
   input,select,textarea{
     width: 100%;
     border-radius: 14px;
@@ -228,31 +344,21 @@
     font-weight: 700;
     outline: none;
   }
+  option{ color: #0b1020; }
   textarea{ resize: none; min-height: 110px; }
   
-  /* HUB abas */
+  /* Hub select */
+  .hub-select{ min-width: 160px; }
+  .sr-only{
+    position:absolute;
+    width:1px; height:1px;
+    padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0);
+    white-space:nowrap; border:0;
+  }
+  
+  /* Hub panes */
   .pane-head{ display:flex; justify-content:flex-end; }
-  .tabs{
-    display:flex;
-    gap: 8px;
-    padding: 4px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.05);
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  .tab{
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    cursor:pointer;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-weight: 900;
-    font-size: 12px;
-  }
-  .tab.active{ color: var(--text); background: rgba(255,255,255,0.10); }
   
   .tabpane{
     display:none;
@@ -262,7 +368,6 @@
   }
   .tabpane.active{ display:flex; flex-direction: column; }
   
-  /* scroll interno para não estourar tela */
   .list{
     flex: 1;
     min-height: 0;
@@ -416,7 +521,7 @@
   .tag.warn{ border-color: rgba(251,191,36,0.35); }
   .tag.good{ border-color: rgba(74,222,128,0.35); }
   
-  /* Music panel (compacto e sem estourar) */
+  /* Music */
   .ambient-grid{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   .ambient-upload{ display:flex; gap: 10px; align-items:flex-end; }
   .music-options{
@@ -454,7 +559,7 @@
     opacity: 0;
     pointer-events:none;
     transition: opacity 220ms ease, transform 220ms ease;
-    z-index: 50;
+    z-index: 90;
   }
   .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-2px); }
   
@@ -465,4 +570,10 @@
     .grid{ grid-template-columns: 1fr; }
     .ambient-grid{ grid-template-columns: 1fr; }
     .ambient-upload{ flex-direction: column; align-items: stretch; }
+  }
+  
+  /* Aqui é o ponto crítico: no mobile os chips somem e entra o hambúrguer */
+  @media (max-width: 720px){
+    .top-actions{ display:none; }
+    .hamb{ display:inline-grid; place-items:center; }
   }
